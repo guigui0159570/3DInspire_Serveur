@@ -31,6 +31,20 @@ public class Utilisateur {
     @ManyToMany(mappedBy = "abonnements")
     private Set<Utilisateur> abonnes = new HashSet<>();
 
+    @OneToOne
+    @JoinColumn(name="profil_id")
+    private Profil profil;
+
+
+
+    public Profil getProfil() {
+        return profil;
+    }
+
+    public void setProfil(Profil profil) {
+        this.profil = profil;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
