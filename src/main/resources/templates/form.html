@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method="post" th:object="${uti}" action="ajoutUtilisateur">
+    <input disabled th:field="*{id}" placeholder="id">
+    <input th:field="*{email}" placeholder="email">
+    <input th:field="*{pseudo}" placeholder="pseudo">
+    <input th:field="*{password}" placeholder="password">
+    <input type="submit">
+</form>
+</body>
+</html>
