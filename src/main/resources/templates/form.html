@@ -5,11 +5,40 @@
     <title>Title</title>
 </head>
 <body>
-<form method="post" th:object="${uti}" action="ajoutUtilisateur">
+<h1>Utilisateur:</h1><br>
+<form method="post" th:object="${uti}" action="saveUtilisateur">
     <input disabled th:field="*{id}" placeholder="id">
     <input th:field="*{email}" placeholder="email">
     <input th:field="*{pseudo}" placeholder="pseudo">
     <input th:field="*{password}" placeholder="password">
+    <input type="submit">
+</form>
+<h1>Publication:</h1><br>
+<form method="post" th:object="${post}" action="savePublication" enctype="multipart/form-data">
+    <input disabled th:field="*{id}" placeholder="id">
+    <input th:field="*{titre}" placeholder="Titre">
+    <input th:field="*{description}" placeholder="Description">
+    <label for="gratuit">Gratuit :</label>
+    <input id="gratuit" type="checkbox" th:field="*{gratuit}" placeholder="Gratuit" checked>
+    <div id="prixDiv" style="display: none;">
+        <label for="prix">Prix :</label>
+        <input id="prix" type="number" th:field="*{prix}">
+    </div>
+    <label for="publique">Publique :</label>
+    <script>
+        document.getElementById("gratuit").addEventListener("change", function() {
+            var prixDiv = document.getElementById("prixDiv");
+            if (this.checked) {
+                prixDiv.style.display = "none";  // Masque le champ de prix si Gratuit est coché
+            } else {
+                prixDiv.style.display = "block"; // Affiche le champ de prix si Gratuit n'est pas coché
+            }
+        });
+    </script>
+    <input id="publique" type="checkbox" th:field="*{publique}" placeholder="Publique">
+    <input type="file" th:field="*{image}" placeholder="Image">
+    <input type="file" th:field="*{fichier}" placeholder="Fichier 3D">
+    <input type="number" th:field="*{proprietaire}" placeholder="ID utilisateur">
     <input type="submit">
 </form>
 </body>

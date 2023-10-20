@@ -1,5 +1,6 @@
 package com.example._3dinspire_serveur.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -35,7 +36,17 @@ public class Utilisateur {
     @JoinColumn(name="profil_id")
     private Profil profil;
 
+    @OneToMany(mappedBy = "proprietaire")
+    @JsonIgnore
+    private Set<Publication> publications;
 
+    public Set<Publication> getPublications() {
+        return publications;
+    }
+
+    public void setPublications(Set<Publication> publications) {
+        this.publications = publications;
+    }
 
     public Profil getProfil() {
         return profil;

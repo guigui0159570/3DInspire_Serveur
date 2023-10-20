@@ -3,6 +3,7 @@ package com.example._3dinspire_serveur.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,6 +30,8 @@ public class Publication {
     private float prix;
     @NotBlank
     private String image;
+    @NotBlank
+    private String fichier;
 
     @NotNull
     private int nb_telechargement;
@@ -46,6 +49,34 @@ public class Publication {
 
     @OneToOne(mappedBy = "publication_notif")
     private Notification notification;
+
+    @ManyToOne
+    @JoinColumn
+    private Utilisateur proprietaire;
+
+    public Set<Panier> getPaniers() {
+        return paniers;
+    }
+
+    public void setPaniers(Set<Panier> paniers) {
+        this.paniers = paniers;
+    }
+
+    public Notification getNotification() {
+        return notification;
+    }
+
+    public void setNotification(Notification notification) {
+        this.notification = notification;
+    }
+
+    public Utilisateur getProprietaire() {
+        return proprietaire;
+    }
+
+    public void setProprietaire(Utilisateur proprietaire) {
+        this.proprietaire = proprietaire;
+    }
 
     public String getTitre() {
         return titre;
@@ -117,5 +148,13 @@ public class Publication {
 
     public Long getId() {
         return id;
+    }
+
+    public String getFichier() {
+        return fichier;
+    }
+
+    public void setFichier(String fichier) {
+        this.fichier = fichier;
     }
 }
