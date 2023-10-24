@@ -42,7 +42,17 @@ public class PublicationControllerREST {
             @RequestParam("image") MultipartFile image,
             @RequestParam("fichier") MultipartFile fichier,
             @RequestParam("proprietaire") Long proprietaire) {
-
+        // Créer un objet Publication à partir des paramètres
+        Publication nouvellePublication = new Publication();
+        nouvellePublication.setTitre(titre);
+        nouvellePublication.setDescription(description);
+        nouvellePublication.setGratuit(gratuit);
+        nouvellePublication.setPublique(publique);
+        nouvellePublication.setPrix(prix);
+        nouvellePublication.setNb_telechargement(0);
+        nouvellePublication.setImage("_");
+        nouvellePublication.setFichier("_");
+        Publication publication = publicationRepository.save(nouvellePublication);
         String lienFichier = "";
         String lienImage = "";
         // Vérifiez si le fichier est vide
@@ -51,7 +61,7 @@ public class PublicationControllerREST {
         } else {
             // Sauvegardez le fichier sur le serveur
             try {
-                lienFichier = System.currentTimeMillis() + "_" + proprietaire.toString() + "_" + titre + "_" + fichier.getOriginalFilename();
+                lienFichier = System.currentTimeMillis() + "_" + publication.getId() + "_" + proprietaire + "_" + titre + "_" + fichier.getOriginalFilename();
                 File dest = new File(uploadDirModel + File.separator + lienFichier);
                 fichier.transferTo(dest);
                 // Vous pouvez également enregistrer le chemin du fichier dans votre base de données si nécessaire.
@@ -63,23 +73,15 @@ public class PublicationControllerREST {
         if (image.isEmpty()) {
         } else {
             try {
-                lienImage = System.currentTimeMillis() + "_" + proprietaire + "_" + titre + "_" + image.getOriginalFilename();
+                lienImage = System.currentTimeMillis() + "_" + publication.getId() + "_" + proprietaire + "_" + titre + "_" + image.getOriginalFilename();
                 File dest = new File(uploadDirImage + File.separator + lienImage);
                 image.transferTo(dest);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        // Créer un objet Publication à partir des paramètres
-        Publication nouvellePublication = new Publication();
-        nouvellePublication.setTitre(titre);
-        nouvellePublication.setDescription(description);
-        nouvellePublication.setGratuit(gratuit);
-        nouvellePublication.setPublique(publique);
-        nouvellePublication.setPrix(prix);
-        nouvellePublication.setImage(lienImage);
-        nouvellePublication.setFichier(lienFichier);
-        nouvellePublication.setNb_telechargement(0);
-        return publicationRepository.save(nouvellePublication);
+        publication.setImage(lienImage);
+        publication.setFichier(lienFichier);
+        return publicationRepository.save(publication);
     }
 }
