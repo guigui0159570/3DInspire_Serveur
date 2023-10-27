@@ -21,6 +21,8 @@ public class Notification {
     @JoinColumn(name = "publication_id")
     private Publication publication_notif;
 
+
+
     public Long getId() {
         return id;
     }
