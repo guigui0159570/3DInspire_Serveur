@@ -26,8 +26,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'javax.persistence:javax.persistence-api:2.2'
-    implementation 'org.hibernate:hibernate-core:5.5.7.Final'
+
 }
 
 tasks.named('test') {

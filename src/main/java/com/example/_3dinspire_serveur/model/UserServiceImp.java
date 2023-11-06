@@ -1,4 +1,4 @@
-package com.example._3dinspire_serveur.model;
+/*package com.example._3dinspire_serveur.model;
 
 
 import com.example._3dinspire_serveur.model.respository.LoginRespository;
@@ -39,3 +39,4 @@ public class UserServiceImp implements LoginService {
         return loginRespository.save(utilisateur);
     }
 }
+*/

@@ -40,6 +40,15 @@ public class Utilisateur {
     @JsonIgnore
     private Set<Publication> publications;
 
+    public Utilisateur(String email, String pseudo, String password) {
+        this.email = email;
+        this.pseudo = pseudo;
+        this.password = password;
+    }
+
+    public Utilisateur() {
+    }
+
     public Set<Publication> getPublications() {
         return publications;
     }
