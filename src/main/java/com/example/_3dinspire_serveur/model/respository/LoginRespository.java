@@ -7,10 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface LoginRespository extends CrudRepository<Utilisateur,Long> {
 
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO utilisateur (email, pseudo, password) VALUES (:email,:pseudo, :password,)", nativeQuery = true)
     int registerNewUser(@Param("email") String email, @Param("pseudo") String pseudo, @Param("password") String password);
+
 }
