@@ -13,10 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/publication")
@@ -78,41 +75,37 @@ public class PublicationControllerREST {
         nouvellePublication.setPublique(publique);
         nouvellePublication.setPrix(prix);
         nouvellePublication.setNb_telechargement(0);
-        nouvellePublication.setImage("_");
         nouvellePublication.setFichier("_");
+        nouvellePublication.setImage("_");
         Publication publication = publicationRepository.save(nouvellePublication);
-        String lienFichier = "";
-        String lienImage = "";
-        // Vérifiez si le fichier est vide
-        if (fichier.isEmpty()) {
-            // Traitement pour un fichier vide, si nécessaire
-        } else {
-            // Sauvegardez le fichier sur le serveur
-            try {
-                lienFichier = System.currentTimeMillis() + "_" + publication.getId() + "_" + proprietaire + "_" + titre + "_" + fichier.getOriginalFilename();
-                File dest = new File(uploadDirModel + File.separator + lienFichier);
-                fichier.transferTo(dest);
-                // Vous pouvez également enregistrer le chemin du fichier dans votre base de données si nécessaire.
-            } catch (IOException e) {
-                e.printStackTrace();
-                // Gérer les erreurs liées à l'écriture du fichier
-            }
-        }
-        if (image.isEmpty()) {
-        } else {
-            try {
-                lienImage = System.currentTimeMillis() + "_" + publication.getId() + "_" + proprietaire + "_" + titre + "_" + image.getOriginalFilename();
-                File dest = new File(uploadDirImage + File.separator + lienImage);
-                image.transferTo(dest);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        publication.setImage(lienImage);
-        publication.setFichier(lienFichier);
+
+        publication.setImage(isEmpty(image, publication.getId(), proprietaire, titre, "i"));
+        publication.setFichier(isEmpty(fichier, publication.getId(), proprietaire, titre, "m"));
+
         Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findById(proprietaire);
         utilisateurOptional.ifPresent(publication::setProprietaire);
         return publicationRepository.save(publication);
+    }
+
+    public String isEmpty(MultipartFile object, long publication_id, long proprietaire_id, String titre, String type){
+        if (object.isEmpty()) {
+            System.out.println("Ta mère il est vide");
+        } else {
+            try {
+                String lien = System.currentTimeMillis() + "_" + publication_id + "_" + proprietaire_id + "_" + titre + "_" + object.getOriginalFilename();
+                File dest;
+                if (Objects.equals(type, "i")){
+                    dest = new File(uploadDirImage + File.separator + lien);
+                } else {
+                    dest = new File(uploadDirModel + File.separator + lien);
+                }
+                object.transferTo(dest);
+                return lien;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return "_";
     }
 
     @DeleteMapping("/delete/{id}")
@@ -185,10 +178,31 @@ public class PublicationControllerREST {
         avis.setEtoile(etoile);
 
         Optional<Publication> publicationOptional = publicationRepository.findById(publication_id);
-        publicationOptional.ifPresent(avis::setPublication);
+        publicationOptional.ifPresentOrElse(
+                avis::setPublication, // Consumer for if the Optional is present
+                new Runnable() { // Runnable for if the Optional is empty
+                    @Override
+                    public void run() {
+                        // Handle the case where publicationOptional is not present
+                        System.err.println("Publication not found for ID: " + publication_id);
+                        new Throwable().printStackTrace(); // Print the stack trace
+                    }
+                }
+        );
 
         Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findById(utilisateur_id);
         utilisateurOptional.ifPresent(avis::setUtilisateur);
+        utilisateurOptional.ifPresentOrElse(
+                avis::setUtilisateur,
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        // Handle the case where publicationOptional is not present
+                        System.err.println("Publication not found for ID: " + utilisateur_id);
+                        new Throwable().printStackTrace(); // Print the stack trace
+                    }
+                }
+        );
 
         return avisRepository.save(avis);
     }
