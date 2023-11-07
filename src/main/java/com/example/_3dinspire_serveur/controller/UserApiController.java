@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1")
 public class UserApiController {
 
-    @Autowired
     LoginService loginService;
     LoginRespository loginRespository;
 
@@ -32,7 +31,7 @@ public class UserApiController {
             return new ResponseEntity<>("Remplir tous les champs", HttpStatus.BAD_REQUEST);
         }
         // Encrypt / Hash mot de passe
-        String hashed_password = BCrypt.hashpw(password, BCrypt.gensalt(12));
+        String hashed_password = BCrypt.hashpw(password, BCrypt.gensalt());
 
 
         // Enregistrer nouv user
@@ -48,9 +47,9 @@ public class UserApiController {
 
 
     @PostMapping("/user/registerV2")
-    public Utilisateur registerNewUser2(@RequestParam("email") String email,
-                                          @RequestParam("password") String password,
-                                          @RequestParam("pseudo") String pseudo){
+    public Utilisateur registerNewUser2(@RequestParam(value = "email") String email,
+                                          @RequestParam(value = "password") String password,
+                                          @RequestParam(value = "pseudo") String pseudo){
         String hashed_password = BCrypt.hashpw(password, BCrypt.gensalt(12));
 
         Utilisateur uti = new Utilisateur(email,pseudo,hashed_password);
@@ -59,6 +58,6 @@ public class UserApiController {
 
     @GetMapping("/test")
     public String testEndpoint(){
-        return "test end point is working";
+        return "connecte";
     }
 }
