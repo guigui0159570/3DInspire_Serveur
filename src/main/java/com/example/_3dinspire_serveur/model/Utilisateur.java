@@ -40,6 +40,18 @@ public class Utilisateur {
     @JsonIgnore
     private Set<Publication> publications;
 
+    @OneToMany(mappedBy = "utilisateur")
+    @JsonIgnore
+    private Set<Avis> avis;
+
+    public Set<Avis> getAvis() {
+        return avis;
+    }
+
+    public void setAvis(Set<Avis> avis) {
+        this.avis = avis;
+    }
+
     public Set<Publication> getPublications() {
         return publications;
     }
