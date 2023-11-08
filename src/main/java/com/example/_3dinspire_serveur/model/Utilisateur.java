@@ -24,13 +24,19 @@ public class Utilisateur {
 
     @ManyToMany
     @JoinTable(
-            name = "abonnements",
-            joinColumns = @JoinColumn(name = "utilisateur_id"),
+            name = "Abonnements",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "abonnement_id")
+    )
+    private Set<Utilisateur> Abonnements;
+
+    @ManyToMany
+    @JoinTable(
+            name = "Abonnes",
+            joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "abonne_id")
     )
-    private Set<Utilisateur> abonnements = new HashSet<>();
-    @ManyToMany(mappedBy = "abonnements")
-    private Set<Utilisateur> abonnes = new HashSet<>();
+    private Set<Utilisateur> Abonnes;
 
     @OneToOne
     @JoinColumn(name="profil_id")
@@ -39,6 +45,15 @@ public class Utilisateur {
     @OneToMany(mappedBy = "proprietaire")
     @JsonIgnore
     private Set<Publication> publications;
+
+
+    public void ajouterAbonnement(Utilisateur user){
+        this.Abonnements.add(user);
+    }
+
+    public void ajouterAbonne(Utilisateur user){
+        this.Abonnes.add(user);
+    }
 
     public Set<Publication> getPublications() {
         return publications;
@@ -65,19 +80,22 @@ public class Utilisateur {
     }
 
     public Set<Utilisateur> getAbonnements() {
-        return abonnements;
+        return Abonnements;
     }
 
+    public Integer countAbonnement(){
+        return getAbonnements().size();
+    }
     public void setAbonnements(Set<Utilisateur> abonnements) {
-        this.abonnements = abonnements;
+        Abonnements = abonnements;
     }
 
     public Set<Utilisateur> getAbonnes() {
-        return abonnes;
+        return Abonnes;
     }
 
     public void setAbonnes(Set<Utilisateur> abonnes) {
-        this.abonnes = abonnes;
+        Abonnes = abonnes;
     }
 
     public String getEmail() {
