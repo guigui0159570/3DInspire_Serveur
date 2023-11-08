@@ -1,5 +1,6 @@
 package com.example._3dinspire_serveur.controller;
 
+import com.example._3dinspire_serveur.model.DTO.UtilisateurDTO;
 import com.example._3dinspire_serveur.model.Publication;
 import com.example._3dinspire_serveur.model.Utilisateur;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,17 @@ public class ControllerTest {
         model.addAttribute("uti", new Utilisateur());
         model.addAttribute("post", new Publication());
         return "form";
+    }
+
+    @GetMapping("/register")
+    public String register(Model model){
+        model.addAttribute("user", new UtilisateurDTO());
+        return "register";
+    }
+
+    @GetMapping("/login")
+    public String login(){
+        return "login";
     }
 
 
