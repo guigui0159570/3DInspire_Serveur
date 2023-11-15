@@ -57,6 +57,21 @@ public class Utilisateur {
             joinColumns={@JoinColumn(name="USER_ID", referencedColumnName="ID")},
             inverseJoinColumns={@JoinColumn(name="ROLE_ID", referencedColumnName="ID")})
     private List<Role> roles = new ArrayList<>();
+    @OneToMany(mappedBy = "utilisateur")
+    @JsonIgnore
+    private Set<Avis> avis;
+
+    public Set<Avis> getAvis() {
+        return avis;
+    }
+
+    public void setAvis(Set<Avis> avis) {
+        this.avis = avis;
+    }
+
+    public Set<Publication> getPublications() {
+        return publications;
+    }
 
     public Utilisateur(String email, String pseudo, String password) {
         this.email = email;

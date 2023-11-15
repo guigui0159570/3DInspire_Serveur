@@ -1,9 +1,9 @@
 package com.example._3dinspire_serveur.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,7 +37,8 @@ public class Publication {
     private int nb_telechargement;
 
     @OneToMany(mappedBy = "publication")
-    private List<Avis> books = new ArrayList<>();
+    @JsonIgnore
+    private List<Avis> avis = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -134,12 +135,12 @@ public class Publication {
         this.nb_telechargement = nb_telechargement;
     }
 
-    public List<Avis> getBooks() {
-        return books;
+    public List<Avis> getAvis() {
+        return avis;
     }
 
-    public void setBooks(List<Avis> books) {
-        this.books = books;
+    public void setAvis(List<Avis> books) {
+        this.avis = books;
     }
 
     public void setId(Long id) {
