@@ -34,15 +34,21 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         user.setEmail(userDto.getEmail());
         // encrypt the password using spring security
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        System.out.println(userDto.getPassword());
-        System.out.println(user.getPassword());
-
-        Role role = roleRepository.findByName("ROLE_ADMIN");
+        Role role = roleRepository.findByName("ROLE_USER");
         if(role == null){
-            role = checkRoleExist();
+            role = checkRoleUserExist();
         }
         user.setRoles(Arrays.asList(role));
         return userRepository.save(user);
+    }
+
+    public Utilisateur setAdmin(Utilisateur utilisateur){
+        Role role = roleRepository.findByName("ROLE_ADMIN");
+        if(role == null){
+            role = checkRoleAdminExist();
+        }
+        utilisateur.getRoles().add(role);
+        return userRepository.save(utilisateur);
     }
 
     @Override
@@ -65,9 +71,14 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         return userDto;
     }
 
-    private Role checkRoleExist(){
+    private Role checkRoleAdminExist(){
         Role role = new Role();
         role.setName("ROLE_ADMIN");
+        return roleRepository.save(role);
+    }
+    private Role checkRoleUserExist(){
+        Role role = new Role();
+        role.setName("ROLE_USER");
         return roleRepository.save(role);
     }
 }

@@ -33,8 +33,9 @@ public class SpringSecurity {
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
+                        .loginPage("/loginForm")
                         .loginProcessingUrl("/login")
+                        .failureForwardUrl("/loginForm")
                         .defaultSuccessUrl("/form")
                         .permitAll()
                 ).logout(
