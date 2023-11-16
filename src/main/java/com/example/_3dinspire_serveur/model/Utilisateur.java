@@ -39,8 +39,10 @@ public class Utilisateur {
             joinColumns = @JoinColumn(name = "utilisateur_id"),
             inverseJoinColumns = @JoinColumn(name = "abonne_id")
     )
+    @JsonIgnore
     private Set<Utilisateur> abonnements = new HashSet<>();
     @ManyToMany(mappedBy = "abonnements")
+    @JsonIgnore
     private Set<Utilisateur> abonnes = new HashSet<>();
 
     @OneToOne
@@ -56,6 +58,7 @@ public class Utilisateur {
             name="users_roles",
             joinColumns={@JoinColumn(name="USER_ID", referencedColumnName="ID")},
             inverseJoinColumns={@JoinColumn(name="ROLE_ID", referencedColumnName="ID")})
+    @JsonIgnore
     private List<Role> roles = new ArrayList<>();
     @OneToMany(mappedBy = "utilisateur")
     @JsonIgnore
