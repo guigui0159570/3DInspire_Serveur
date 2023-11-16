@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -20,19 +21,16 @@ public class AuthController {
         this.userService = utilisateurService;
     }
     @PostMapping("/register/save")
-    public ResponseEntity<Utilisateur> registration(@Valid @ModelAttribute("user") UtilisateurDTO userDto,
-                                       BindingResult result,
-                                       Model model){
+    public ResponseEntity<Utilisateur> registration(
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            @RequestParam("pseudo") String pseudo){
+        UtilisateurDTO userDto = new UtilisateurDTO(email,pseudo ,password);
+        System.out.println("Onscription : " + email + " / " + password + " / " + pseudo);
         Utilisateur existingUser = userService.findUserByEmail(userDto.getEmail());
 
         if(existingUser != null && existingUser.getEmail() != null && !existingUser.getEmail().isEmpty()){
-            result.rejectValue("email", null,
-                    "There is already an account registered with the same email");
-        }
-
-        if(result.hasErrors()){
-            // model.addAttribute("user", userDto);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            System.out.println("BUG !!!!!!!!!!!!!!!!!!!!!!!!");
         }
 
         Utilisateur u = userService.saveUser(userDto);

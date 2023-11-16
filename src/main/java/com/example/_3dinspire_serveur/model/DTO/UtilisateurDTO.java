@@ -27,6 +27,11 @@ public class UtilisateurDTO {
     // Getters and setters
 
 
+    public UtilisateurDTO(String email, String pseudo, String password) {
+        this.email = email;
+        this.pseudo = pseudo;
+        this.password = password;
+    }
 
     public UtilisateurDTO(Long id, String email, String pseudo, Set<Utilisateur> abonnementsIds, Set<Utilisateur> abonnesIds, Set<Publication> publicationsIds, Set<Avis> avisIds) {
         this.id = id;
