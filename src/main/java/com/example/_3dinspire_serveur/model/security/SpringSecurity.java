@@ -40,8 +40,7 @@ public class SpringSecurity {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.
                 authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/register/save").permitAll()
-                        .requestMatchers("/register").permitAll()
+                        .requestMatchers("/register/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(requestLoggingFilter(), BasicAuthenticationFilter.class)
