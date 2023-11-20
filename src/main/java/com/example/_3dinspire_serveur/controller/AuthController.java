@@ -24,10 +24,9 @@ public class AuthController {
                                        BindingResult result,
                                        Model model){
         Utilisateur existingUser = userService.findUserByEmail(userDto.getEmail());
-        System.out.println(userDto.getEmail() + userDto.getPassword());
         if(existingUser != null && existingUser.getEmail() != null && !existingUser.getEmail().isEmpty()){
             result.rejectValue("email", null,
-                    "There is already an account registered with the same email");
+                    "Un compte existe déjà sous cette adresse email.");
         }
 
         if(result.hasErrors()){
