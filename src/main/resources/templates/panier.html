@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Panier</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css"/>
 </head>
 <body>
-    <table>
-        <tr th:each="p : ${publications}" th:object="${p}">
-            <td th:field="*{id}"></td>
-            <td th:field="*{titre}"></td>
-            <td th:field="*{prix}"></td>
-            <td th:field="*{image}"></td>
-            <td th:field="*{proprietaire}"></td>
-        </tr>
-    </table>
+    <form method="post" action="panier/creationPanier" th:object="${panier}">
+        <input th:field="*{idPanier}" placeholder="id" type="hidden">
+        <input th:field="*{prixTT}" type="number" placeholder="prixTTC">
+        <label>
+            Etat
+            <input th:field="*{etat}" type="checkbox">
+        </label>
+        <button type="submit"> Créer</button>
+    </form>
+
 </body>
 </html>

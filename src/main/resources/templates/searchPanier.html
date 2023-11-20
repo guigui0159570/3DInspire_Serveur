@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Recherche de panier</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css"/>
+</head>
+<body>
+    <form method="post" action="panier/resultSearchPanier" th:object="${utilisateur}">
+        <input th:field="*{email}" placeholder="votre email">
+        <input th:field="*{pseudo}" placeholder="votre pseudo">
+        <input th:field="*{password}" placeholder="votre mot de passe">
+        <button type="submit">Rechercher</button>
+    </form>
+</body>
+</html>

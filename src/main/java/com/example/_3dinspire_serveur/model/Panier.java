@@ -1,9 +1,6 @@
 package com.example._3dinspire_serveur.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.HashSet;
@@ -19,14 +16,18 @@ public class Panier {
     @NotNull
     private boolean etat;
 
+    @OneToOne(mappedBy = "panier")
+    private Utilisateur proprietaire;
+
 
     @ManyToMany(mappedBy = "paniers")
     private Set<Publication> publications = new HashSet<>();
 
 
-    public Panier(float prixTT, boolean etat, Set<Publication> publications) {
+    public Panier(float prixTT, boolean etat, Utilisateur proprietaire, Set<Publication> publications) {
         this.prixTT = prixTT;
         this.etat = etat;
+        this.proprietaire = proprietaire;
         this.publications = publications;
     }
 
@@ -63,5 +64,13 @@ public class Panier {
 
     public void setPublications(Set<Publication> publications) {
         this.publications = publications;
+    }
+
+    public Utilisateur getProprietaire() {
+        return proprietaire;
+    }
+
+    public void setProprietaire(Utilisateur proprietaire) {
+        this.proprietaire = proprietaire;
     }
 }

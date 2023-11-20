@@ -1,6 +1,7 @@
 package com.example._3dinspire_serveur.controller;
 
 import com.example._3dinspire_serveur.model.Avis;
+import com.example._3dinspire_serveur.model.Panier;
 import com.example._3dinspire_serveur.model.Publication;
 import com.example._3dinspire_serveur.model.Utilisateur;
 import org.springframework.stereotype.Controller;
@@ -16,4 +17,6 @@ public class ControllerTest {
         model.addAttribute("avis", new Avis());
         return "form";
     }
+
+
 }
