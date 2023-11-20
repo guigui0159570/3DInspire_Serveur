@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css"/>
 </head>
 <body>
 <h1>Utilisateur:</h1><br>
@@ -14,7 +15,7 @@
     <input type="submit">
 </form>
 <h1>Publication:</h1><br>
-<form method="post" th:object="${post}" action="savePublication" enctype="multipart/form-data">
+<form method="post" th:object="${post}" action="/publication/save" enctype="multipart/form-data">
     <input disabled th:field="*{id}" placeholder="id">
     <input th:field="*{titre}" placeholder="Titre">
     <input th:field="*{description}" placeholder="Description">
@@ -36,9 +37,20 @@
         });
     </script>
     <input id="publique" type="checkbox" th:field="*{publique}" placeholder="Publique">
-    <input type="file" th:field="*{image}" placeholder="Image">
-    <input type="file" th:field="*{fichier}" placeholder="Fichier 3D">
-    <input type="number" th:field="*{proprietaire}" placeholder="ID utilisateur">
+    <label for="image">Image :</label>
+    <input id="image" type="file" th:field="*{image}" placeholder="Image" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
+    <label for="fichier">Fichier :</label>
+    <input id="fichier" type="file" th:field="*{fichier}" placeholder="Fichier 3D" accept=".obj, .3ds, .sldprt, .scad, .blend, .3mf, .gcode, .skp, .fbx">
+    <input type="number" th:field="*{proprietaire}" placeholder="ID proprio">
+    <input type="submit">
+</form>
+<h1>Avis:</h1><br>
+<form method="post" th:object="${avis}" action="/publication/avis/save" enctype="multipart/form-data">
+    <input disabled th:field="*{id}" placeholder="id">
+    <input th:field="*{commentaire}" placeholder="Commentaire">
+    <input type="number" min="1" max="5" th:field="*{etoile}" placeholder="Note">
+    <input type="number" th:field="*{publication}" placeholder="Publication id">
+    <input type="number" th:field="*{utilisateur}" placeholder="Utilisateur id">
     <input type="submit">
 </form>
 </body>
