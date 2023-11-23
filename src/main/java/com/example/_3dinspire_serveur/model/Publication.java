@@ -55,6 +55,9 @@ public class Publication {
     @JoinColumn
     private Utilisateur proprietaire;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "publication")
+    private List<Tag> tags;
+
     public Set<Panier> getPaniers() {
         return paniers;
     }
