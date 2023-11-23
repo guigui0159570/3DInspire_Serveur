@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Panier</title>
+</head>
+<body>
+    <table>
+        <tr th:each="p : ${publications}" th:object="${p}">
+            <td th:field="*{id}"></td>
+            <td th:field="*{titre}"></td>
+            <td th:field="*{prix}"></td>
+            <td th:field="*{image}"></td>
+            <td th:field="*{proprietaire}"></td>
+        </tr>
+    </table>
+</body>
+</html>

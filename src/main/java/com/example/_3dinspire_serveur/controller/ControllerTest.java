@@ -1,5 +1,6 @@
 package com.example._3dinspire_serveur.controller;
 
+import com.example._3dinspire_serveur.model.DTO.UtilisateurDTO;
 import com.example._3dinspire_serveur.model.Avis;
 import com.example._3dinspire_serveur.model.Publication;
 import com.example._3dinspire_serveur.model.Utilisateur;
@@ -16,4 +17,18 @@ public class ControllerTest {
         model.addAttribute("avis", new Avis());
         return "form";
     }
+
+    @GetMapping("/register")
+    public String register(Model model){
+        model.addAttribute("user", new UtilisateurDTO());
+        return "register";
+    }
+
+    @GetMapping("/loginForm")
+    public String login(){
+        return "loginForm";
+    }
+
+
+
 }

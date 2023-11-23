@@ -9,13 +9,13 @@ import java.util.Set;
 
 public class UtilisateurDTO {
     private Long id;
-
     @Email
     @NotBlank
     private String email;
-
     @NotBlank
     private String pseudo;
+    @NotBlank
+    private String password;
 
     // No password field in DTO to enhance security
 
@@ -26,6 +26,12 @@ public class UtilisateurDTO {
 
     // Getters and setters
 
+
+    public UtilisateurDTO(String email, String pseudo, String password) {
+        this.email = email;
+        this.pseudo = pseudo;
+        this.password = password;
+    }
 
     public UtilisateurDTO(Long id, String email, String pseudo, Set<Utilisateur> abonnementsIds, Set<Utilisateur> abonnesIds, Set<Publication> publicationsIds, Set<Avis> avisIds) {
         this.id = id;
@@ -44,6 +50,9 @@ public class UtilisateurDTO {
         setAbonnesIds(utilisateur.getAbonnes());
         setAvisIds(utilisateur.getAvis());
         setPublicationsIds(utilisateur.getPublications());
+    }
+
+    public UtilisateurDTO() {
     }
 
     public Long getId() {
@@ -70,6 +79,13 @@ public class UtilisateurDTO {
         this.pseudo = pseudo;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
     public Set<Long> getAbonnementsIds() {
         return abonnementsIds;
     }
