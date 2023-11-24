@@ -3,9 +3,11 @@ package com.example._3dinspire_serveur.controller;
 import com.example._3dinspire_serveur.model.Avis;
 import com.example._3dinspire_serveur.model.DTO.AvisDTO;
 import com.example._3dinspire_serveur.model.Publication;
+import com.example._3dinspire_serveur.model.Tag;
 import com.example._3dinspire_serveur.model.Utilisateur;
 import com.example._3dinspire_serveur.repository.AvisRepository;
 import com.example._3dinspire_serveur.repository.PublicationRepository;
+import com.example._3dinspire_serveur.repository.TagRespository;
 import com.example._3dinspire_serveur.repository.UtilisateurRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -23,16 +25,18 @@ public class PublicationControllerREST {
 
     private final UtilisateurRepository utilisateurRepository;
     private final AvisRepository avisRepository;
+    private final TagRespository tagRespository;
 
     @Value("${file.upload-dir-model}")
     private String uploadDirModel;
     @Value("${file.upload-dir-image}")
     private String uploadDirImage;
 
-    public PublicationControllerREST(PublicationRepository publicationRepository, UtilisateurRepository utilisateurRepository, AvisRepository avisRepository) {
+    public PublicationControllerREST(PublicationRepository publicationRepository, UtilisateurRepository utilisateurRepository, AvisRepository avisRepository, TagRespository tagRespository) {
         this.publicationRepository = publicationRepository;
         this.utilisateurRepository = utilisateurRepository;
         this.avisRepository = avisRepository;
+        this.tagRespository = tagRespository;
     }
 
     @GetMapping("/get/{id}")
@@ -71,8 +75,9 @@ public class PublicationControllerREST {
             @RequestParam("publique") boolean publique,
             @RequestParam("prix") float prix,
             @RequestParam("image") MultipartFile image,
-            @RequestParam("fichier") MultipartFile fichier,
-            @RequestParam("proprietaire") Long proprietaire) {
+            @RequestParam("proprietaire") Long proprietaire,
+            @RequestParam("tags") List<String> tags) {
+
         // Créer un objet Publication à partir des paramètres
         Publication nouvellePublication = new Publication();
         nouvellePublication.setTitre(titre);
@@ -86,8 +91,26 @@ public class PublicationControllerREST {
         Publication publication = publicationRepository.save(nouvellePublication);
 
         publication.setImage(isEmpty(image, publication.getId(), proprietaire, titre, "i"));
-        publication.setFichier(isEmpty(fichier, publication.getId(), proprietaire, titre, "m"));
+        // Ajouter les tags à la publication
+        if (tags != null && !tags.isEmpty()) {
+            for (String tagName : tags) {
+                // Vérifier si le tag existe déjà dans la table
+                Optional<Tag> existingTagOptional = tagRespository.findById(tagName);
 
+                if (existingTagOptional.isPresent()) {
+                    // Si le tag existe déjà, l'associer à la publication
+                    Tag existingTag = existingTagOptional.get();
+                    existingTag.setPublication(publication);
+                    tagRespository.save(existingTag);
+                } else {
+                    // Si le tag n'existe pas, le créer et l'associer à la publication
+                    Tag newTag = new Tag();
+                    newTag.setNom(tagName);
+                    newTag.setPublication(publication);
+                    tagRespository.save(newTag);
+                }
+            }
+        }
         Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findById(proprietaire);
         utilisateurOptional.ifPresent(publication::setProprietaire);
         return publicationRepository.save(publication);
@@ -95,7 +118,7 @@ public class PublicationControllerREST {
 
     public String isEmpty(MultipartFile object, long publication_id, long proprietaire_id, String titre, String type){
         if (object.isEmpty()) {
-            System.out.println("Ta mère il est vide");
+            System.out.println("Fichier est vide");
         } else {
             try {
                 String lien = System.currentTimeMillis() + "_" + publication_id + "_" + proprietaire_id + "_" + titre + "_" + object.getOriginalFilename();
