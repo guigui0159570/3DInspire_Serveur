@@ -10,16 +10,14 @@ public class Profil {
     @GeneratedValue
     private Long id;
 
-    @NotBlank
     private String description;
 
-    @NotBlank
-    private String photo;
+    private byte[] photo;
 
     @OneToOne(mappedBy = "profil")
     private Utilisateur utilisateur;
 
-    public Profil(String description, String photo, Utilisateur utilisateur) {
+    public Profil(String description, byte[] photo, Utilisateur utilisateur) {
         this.description = description;
         this.photo = photo;
         this.utilisateur = utilisateur;
@@ -45,11 +43,11 @@ public class Profil {
         this.description = description;
     }
 
-    public String getPhoto() {
+    public byte[] getPhoto() {
         return photo;
     }
 
-    public void setPhoto(String photo) {
+    public void setPhoto(byte[] photo) {
         this.photo = photo;
     }
 

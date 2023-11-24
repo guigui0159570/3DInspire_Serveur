@@ -94,6 +94,10 @@ public class Utilisateur {
         return Abonnes;
     }
 
+    public Integer countAbonne(){
+        return getAbonnes().size();
+    }
+
     public void setAbonnes(Set<Utilisateur> abonnes) {
         Abonnes = abonnes;
     }
