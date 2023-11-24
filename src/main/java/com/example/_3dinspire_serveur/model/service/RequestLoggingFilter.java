@@ -12,7 +12,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // Imprimez les détails de la requête ici
-        System.out.println("Requête reçue: " + request.getMethod() + " " + request.getRequestURI());
+        System.out.println("Requête reçue: " + request.getMethod() + " " + request.getRequestURI() + " " + request.getHeader("email"));
         // Vous pouvez également imprimer les en-têtes, les paramètres, etc. selon vos besoins
 
         // Continuez la chaîne de filtres

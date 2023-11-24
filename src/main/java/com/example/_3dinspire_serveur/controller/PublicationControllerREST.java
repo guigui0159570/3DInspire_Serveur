@@ -8,6 +8,7 @@ import com.example._3dinspire_serveur.repository.AvisRepository;
 import com.example._3dinspire_serveur.repository.PublicationRepository;
 import com.example._3dinspire_serveur.repository.UtilisateurRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,8 +54,13 @@ public class PublicationControllerREST {
     }
 
     @GetMapping("/getAll")
-    public Iterable<Publication> getAllPublication(){
-        return publicationRepository.findAll();
+    public ResponseEntity<Iterable<Publication>> getAllPublication() {
+        Iterable<Publication> publications = publicationRepository.findAll();
+        ResponseEntity<Iterable<Publication>> responseEntity = ResponseEntity.ok().body(publications);
+        responseEntity.getHeaders().forEach((headerName, headerValues) ->
+                System.out.println(headerName + ": " + headerValues));
+
+        return responseEntity;
     }
 
     @PostMapping("/save")
