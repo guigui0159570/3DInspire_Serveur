@@ -60,8 +60,8 @@ public class Utilisateur {
             inverseJoinColumns={@JoinColumn(name="ROLE_ID", referencedColumnName="ID")})
     @JsonIgnore
     private List<Role> roles = new ArrayList<>();
-    @OneToMany(mappedBy = "utilisateur")
-    @JsonIgnore
+
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)    @JsonIgnore
     private Set<Avis> avis;
 
     public Set<Avis> getAvis() {

@@ -5,6 +5,8 @@ import com.example._3dinspire_serveur.model.Publication;
 import com.example._3dinspire_serveur.model.Utilisateur;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.security.core.userdetails.UserDetailsService;
+
 import java.util.Set;
 
 public class UtilisateurDTO {
