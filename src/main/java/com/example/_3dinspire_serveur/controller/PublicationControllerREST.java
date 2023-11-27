@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -88,28 +89,24 @@ public class PublicationControllerREST {
         nouvellePublication.setNb_telechargement(0);
         nouvellePublication.setFichier("_");
         nouvellePublication.setImage("_");
+        nouvellePublication.setDateLocal(LocalDateTime.now());
         Publication publication = publicationRepository.save(nouvellePublication);
 
         publication.setImage(isEmpty(image, publication.getId(), proprietaire, titre, "i"));
-        // Ajouter les tags à la publication
-        if (tags != null && !tags.isEmpty()) {
-            for (String tagName : tags) {
-                // Vérifier si le tag existe déjà dans la table
-                Optional<Tag> existingTagOptional = tagRespository.findById(tagName);
 
-                if (existingTagOptional.isPresent()) {
-                    // Si le tag existe déjà, l'associer à la publication
-                    Tag existingTag = existingTagOptional.get();
-                    existingTag.setPublication(publication);
-                    tagRespository.save(existingTag);
-                } else {
-                    // Si le tag n'existe pas, le créer et l'associer à la publication
-                    Tag newTag = new Tag();
-                    newTag.setNom(tagName);
-                    newTag.setPublication(publication);
-                    tagRespository.save(newTag);
-                }
-            }
+        for (String tagNom : tags) {
+            String tagNomSansGuillemets = tagNom.replaceAll("\"", "");  // Enlever les guillemets
+            Optional<Tag> tagOptional = tagRespository.findByNom(tagNomSansGuillemets);
+
+            Tag tag = tagOptional.orElseGet(() -> {
+                Tag nouveauTag = new Tag();
+                nouveauTag.setNom(tagNomSansGuillemets);
+                return tagRespository.save(nouveauTag);
+            });
+
+            // Associer la publication au tag et vice versa
+            publication.getTags().add(tag);
+            tag.getPublications().add(publication);
         }
         Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findById(proprietaire);
         utilisateurOptional.ifPresent(publication::setProprietaire);
