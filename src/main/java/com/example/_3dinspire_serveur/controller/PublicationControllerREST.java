@@ -76,8 +76,9 @@ public class PublicationControllerREST {
             @RequestParam("publique") boolean publique,
             @RequestParam("prix") float prix,
             @RequestParam("image") MultipartFile image,
-            @RequestParam("proprietaire") Long proprietaire,
-            @RequestParam("tags") List<String> tags) {
+            @RequestParam("tags") List<String> tags,
+            @RequestParam("email") String email
+            ) {
 
         // Créer un objet Publication à partir des paramètres
         Publication nouvellePublication = new Publication();
@@ -91,8 +92,12 @@ public class PublicationControllerREST {
         nouvellePublication.setImage("_");
         nouvellePublication.setDateLocal(LocalDateTime.now());
         Publication publication = publicationRepository.save(nouvellePublication);
+        String nouvemail = email.replaceAll("\"", "");
 
-        publication.setImage(isEmpty(image, publication.getId(), proprietaire, titre, "i"));
+        Optional<Utilisateur> utilisateurOptional = Optional.ofNullable(utilisateurRepository.findByEmail(nouvemail));
+        Utilisateur utilisateur = utilisateurOptional.orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé pour l'e-mail " + email));
+
+        publication.setImage(isEmpty(image, publication.getId(), utilisateur.getId(), titre, "i"));
 
         for (String tagNom : tags) {
             String tagNomSansGuillemets = tagNom.replaceAll("\"", "");  // Enlever les guillemets
@@ -108,7 +113,7 @@ public class PublicationControllerREST {
             publication.getTags().add(tag);
             tag.getPublications().add(publication);
         }
-        Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findById(proprietaire);
+
         utilisateurOptional.ifPresent(publication::setProprietaire);
         return publicationRepository.save(publication);
     }
