@@ -2,6 +2,7 @@ package com.example._3dinspire_serveur.controller;
 
 import com.example._3dinspire_serveur.model.DTO.UtilisateurDTO;
 import com.example._3dinspire_serveur.model.Avis;
+import com.example._3dinspire_serveur.model.Panier;
 import com.example._3dinspire_serveur.model.Publication;
 import com.example._3dinspire_serveur.model.Utilisateur;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,7 @@ public class ControllerTest {
         return "form";
     }
 
+<<<<<<< HEAD
     @GetMapping("/register")
     public String register(Model model){
         model.addAttribute("user", new UtilisateurDTO());
@@ -30,5 +32,7 @@ public class ControllerTest {
     }
 
 
+=======
+>>>>>>> panier
 
 }

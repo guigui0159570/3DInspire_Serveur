@@ -64,6 +64,9 @@ public class Utilisateur {
     @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)    @JsonIgnore
     private Set<Avis> avis;
 
+    @OneToOne @JoinColumn(name = "panier_user")
+    private Panier panier;
+
     public Set<Avis> getAvis() {
         return avis;
     }
@@ -85,4 +88,55 @@ public class Utilisateur {
     public Long getId() {
         return id;
     }
+<<<<<<< HEAD
+=======
+
+    public Set<Utilisateur> getAbonnements() {
+        return abonnements;
+    }
+
+    public void setAbonnements(Set<Utilisateur> abonnements) {
+        this.abonnements = abonnements;
+    }
+
+    public Set<Utilisateur> getAbonnes() {
+        return abonnes;
+    }
+
+    public void setAbonnes(Set<Utilisateur> abonnes) {
+        this.abonnes = abonnes;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPseudo() {
+        return pseudo;
+    }
+
+    public void setPseudo(String pseudo) {
+        this.pseudo = pseudo;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Panier getPanier() {
+        return panier;
+    }
+
+    public void setPanier(Panier panier) {
+        this.panier = panier;
+    }
+>>>>>>> panier
 }
