@@ -189,7 +189,7 @@ public class PublicationControllerREST {
                     }
                 }
         );
-
+        
         Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findById(utilisateur_id);
         utilisateurOptional.ifPresent(avis::setUtilisateur);
         utilisateurOptional.ifPresentOrElse(
@@ -206,4 +206,5 @@ public class PublicationControllerREST {
 
         return avisRepository.save(avis);
     }
+
 }

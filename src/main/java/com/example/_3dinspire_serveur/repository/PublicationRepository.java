@@ -14,4 +14,5 @@ public interface PublicationRepository extends CrudRepository<Publication, Long>
     @Query("select publication from Publication publication where publication.gratuit = :gratuit " +
             "and publication.proprietaire = :proprio")
     Iterable<Publication> getPublicationByStatut(Boolean gratuit, Long proprio);
+
 }

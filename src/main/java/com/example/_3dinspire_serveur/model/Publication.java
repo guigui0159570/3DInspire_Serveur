@@ -40,6 +40,7 @@ public class Publication {
     @JsonIgnore
     private List<Avis> avis = new ArrayList<>();
 
+    //@JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "publication_panier",
@@ -54,6 +55,25 @@ public class Publication {
     @ManyToOne
     @JoinColumn
     private Utilisateur proprietaire;
+
+    public Publication() {
+    }
+
+    public Publication(Long id, String titre, String description, boolean gratuit, boolean publique, float prix, String image, String fichier, int nb_telechargement, List<Avis> avis, Set<Panier> paniers, Notification notification, Utilisateur proprietaire) {
+        this.id = id;
+        this.titre = titre;
+        this.description = description;
+        this.gratuit = gratuit;
+        this.publique = publique;
+        this.prix = prix;
+        this.image = image;
+        this.fichier = fichier;
+        this.nb_telechargement = nb_telechargement;
+        this.avis = avis;
+        this.paniers = paniers;
+        this.notification = notification;
+        this.proprietaire = proprietaire;
+    }
 
     public Set<Panier> getPaniers() {
         return paniers;
@@ -157,5 +177,13 @@ public class Publication {
 
     public void setFichier(String fichier) {
         this.fichier = fichier;
+    }
+
+    public Integer notation_publication(){
+        int sum = 0;
+        for(Avis i : avis){
+            sum += i.getEtoile();
+        }
+        return Math.round((float) sum /avis.size());
     }
 }

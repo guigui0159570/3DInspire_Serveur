@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class PanierController {
-    
+
     @GetMapping("/pagePanier")
     public String pagePanier(Model model){
         model.addAttribute("panier", new Panier());
