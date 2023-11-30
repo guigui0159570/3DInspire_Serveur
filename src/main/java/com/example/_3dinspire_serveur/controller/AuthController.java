@@ -50,6 +50,7 @@ public class AuthController {
     public ResponseEntity<Utilisateur> registration(@Valid @ModelAttribute("user") UtilisateurDTO userDto,
                                        BindingResult result,
                                        Model model){
+        System.out.println(userDto.getEmail()+userDto.getPassword()+userDto.getPseudo());
         Utilisateur existingUser = userService.findUserByEmail(userDto.getEmail());
         if(existingUser != null && existingUser.getEmail() != null && !existingUser.getEmail().isEmpty()){
             result.rejectValue("email", null,

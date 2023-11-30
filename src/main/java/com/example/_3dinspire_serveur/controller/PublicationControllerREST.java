@@ -58,9 +58,20 @@ public class PublicationControllerREST {
         else return null;
     }
 
+
     @GetMapping("/getAll")
     public ResponseEntity<Iterable<Publication>> getAllPublication() {
         Iterable<Publication> publications = publicationRepository.findAll();
+        ResponseEntity<Iterable<Publication>> responseEntity = ResponseEntity.ok().body(publications);
+        responseEntity.getHeaders().forEach((headerName, headerValues) ->
+                System.out.println(headerName + ": " + headerValues));
+
+        return responseEntity;
+    }
+
+    @GetMapping("/getAllByTime")
+    public ResponseEntity<Iterable<Publication>> getAllPublicationByTime() {
+        Iterable<Publication> publications = publicationRepository.getPublicationByTime();
         ResponseEntity<Iterable<Publication>> responseEntity = ResponseEntity.ok().body(publications);
         responseEntity.getHeaders().forEach((headerName, headerValues) ->
                 System.out.println(headerName + ": " + headerValues));

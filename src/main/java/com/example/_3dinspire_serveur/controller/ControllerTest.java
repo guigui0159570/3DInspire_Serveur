@@ -19,7 +19,6 @@ public class ControllerTest {
         return "form";
     }
 
-<<<<<<< HEAD
     @GetMapping("/register")
     public String register(Model model){
         model.addAttribute("user", new UtilisateurDTO());
@@ -32,7 +31,5 @@ public class ControllerTest {
     }
 
 
-=======
->>>>>>> panier
 
 }
