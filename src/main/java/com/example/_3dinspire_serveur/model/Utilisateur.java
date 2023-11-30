@@ -88,8 +88,7 @@ public class Utilisateur {
     public Long getId() {
         return id;
     }
-<<<<<<< HEAD
-=======
+
 
     public Set<Utilisateur> getAbonnements() {
         return abonnements;
@@ -138,5 +137,5 @@ public class Utilisateur {
     public void setPanier(Panier panier) {
         this.panier = panier;
     }
->>>>>>> panier
+
 }
