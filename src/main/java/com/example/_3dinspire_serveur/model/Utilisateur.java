@@ -89,7 +89,6 @@ public class Utilisateur {
         return id;
     }
 
-
     public Set<Utilisateur> getAbonnements() {
         return abonnements;
     }
@@ -137,5 +136,4 @@ public class Utilisateur {
     public void setPanier(Panier panier) {
         this.panier = panier;
     }
-
 }

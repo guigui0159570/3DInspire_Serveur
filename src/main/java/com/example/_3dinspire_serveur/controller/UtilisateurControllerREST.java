@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import java.util.Iterator;
 
 @RestController
@@ -42,5 +43,11 @@ public class UtilisateurControllerREST {
     @GetMapping("/getAllUtilisateurs")
     public Iterable<Utilisateur> getAllUtilisateur(){
         return utilisateurRepository.findAll();
+    }
+
+    @GetMapping("/getUtilisateurIdByEmail")
+    public Long getUtilisateurIdByEmail(@RequestParam String email) {
+        Utilisateur utilisateur = utilisateurRepository.findByEmail(email);
+        return utilisateur.getId();
     }
 }
