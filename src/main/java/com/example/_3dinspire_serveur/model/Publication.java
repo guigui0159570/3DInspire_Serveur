@@ -44,12 +44,14 @@ public class Publication {
     @JsonIgnore
     private List<Avis> avis = new ArrayList<>();
 
+
     @ManyToMany
     @JoinTable(
             name = "publication_panier",
             joinColumns = @JoinColumn(name = "publication_id"),
             inverseJoinColumns = @JoinColumn(name = "panier_id")
     )
+    @JsonIgnore
     private Set<Panier> paniers = new HashSet<>();
 
     @OneToOne(mappedBy = "publication_notif")

@@ -13,6 +13,7 @@ public interface PublicationRepository extends CrudRepository<Publication, Long>
     @Query("select publication from Publication publication where publication.proprietaire = :utilisateur order by publication.dateLocal desc")
     Iterable<Publication> getPublicationByProprietaireId(Utilisateur utilisateur);
 
-    @Query("select publication from Publication publication order by publication.dateLocal desc ")
+    @Query("select publication from Publication publication where publication.publique = true order by publication.dateLocal desc ")
     Iterable<Publication> getPublicationByTime();
+
 }
