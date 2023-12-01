@@ -44,7 +44,6 @@ public class Publication {
     @JsonIgnore
     private List<Avis> avis = new ArrayList<>();
 
-
     @ManyToMany
     @JoinTable(
             name = "publication_panier",

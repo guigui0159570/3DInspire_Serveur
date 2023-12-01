@@ -73,7 +73,7 @@ public class SpringSecurity {
         http.
                 authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers("/api/auth/register").permitAll()
+                        .requestMatchers("/register").permitAll()
                         .requestMatchers("/api/auth/register/save").permitAll()
                         .anyRequest().authenticated()
                 )

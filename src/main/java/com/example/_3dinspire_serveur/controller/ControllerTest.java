@@ -30,6 +30,4 @@ public class ControllerTest {
         return "loginForm";
     }
 
-
-
 }

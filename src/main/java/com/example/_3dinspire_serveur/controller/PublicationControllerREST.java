@@ -248,4 +248,5 @@ public class PublicationControllerREST {
 
         return avisRepository.save(avis);
     }
+
 }
