@@ -2,6 +2,7 @@ package com.example._3dinspire_serveur.controller;
 import com.example._3dinspire_serveur.model.DTO.UtilisateurDTO;
 import com.example._3dinspire_serveur.model.Avis;
 import com.example._3dinspire_serveur.model.Profil;
+import com.example._3dinspire_serveur.model.Panier;
 import com.example._3dinspire_serveur.model.Publication;
 import com.example._3dinspire_serveur.model.Utilisateur;
 import com.example._3dinspire_serveur.repository.UtilisateurRepository;

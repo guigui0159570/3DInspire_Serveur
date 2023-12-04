@@ -1,0 +1,1 @@
+SELECT u.id FROM Utilisateur u WHERE u.email = "abcd@gmail.com"

@@ -8,6 +8,7 @@ import com.example._3dinspire_serveur.model.response.ErrorRes;
 import com.example._3dinspire_serveur.model.response.LoginRes;
 import com.example._3dinspire_serveur.model.security.JwtUtil;
 import com.example._3dinspire_serveur.model.service.UtilisateurService;
+import com.example._3dinspire_serveur.repository.UtilisateurRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -37,16 +38,19 @@ public class AuthController {
     private UtilisateurService userService;
     private final AuthenticationManager authenticationManager;
     private JwtUtil jwtUtil;
+    private UtilisateurRepository utilisateurRepository;
 
-    public AuthController(UtilisateurService utilisateurService, AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+    public AuthController(UtilisateurService utilisateurService, AuthenticationManager authenticationManager, JwtUtil jwtUtil,UtilisateurRepository utilisateurRepository) {
         this.userService = utilisateurService;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+        this.utilisateurRepository = utilisateurRepository;
     }
     @PostMapping("/register/save")
     public ResponseEntity<Utilisateur> registration(@Valid @ModelAttribute("user") UtilisateurDTO userDto,
                                        BindingResult result,
                                        Model model){
+        System.out.println(userDto.getEmail()+userDto.getPassword()+userDto.getPseudo());
         Utilisateur existingUser = userService.findUserByEmail(userDto.getEmail());
         if(existingUser != null && existingUser.getEmail() != null && !existingUser.getEmail().isEmpty()){
             result.rejectValue("email", null,
@@ -124,4 +128,11 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
+    @GetMapping("/get-user-email")
+    public ResponseEntity<String> getUserEmail() {
+        // Obtenez l'e-mail de l'utilisateur à partir du contexte de sécurité
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(userEmail);
+    }
+
 }

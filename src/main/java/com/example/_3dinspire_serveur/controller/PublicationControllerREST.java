@@ -58,9 +58,20 @@ public class PublicationControllerREST {
         else return null;
     }
 
+
     @GetMapping("/getAll")
     public ResponseEntity<Iterable<Publication>> getAllPublication() {
         Iterable<Publication> publications = publicationRepository.findAll();
+        ResponseEntity<Iterable<Publication>> responseEntity = ResponseEntity.ok().body(publications);
+        responseEntity.getHeaders().forEach((headerName, headerValues) ->
+                System.out.println(headerName + ": " + headerValues));
+
+        return responseEntity;
+    }
+
+    @GetMapping("/getAllByTime")
+    public ResponseEntity<Iterable<Publication>> getAllPublicationByTime() {
+        Iterable<Publication> publications = publicationRepository.getPublicationByTime();
         ResponseEntity<Iterable<Publication>> responseEntity = ResponseEntity.ok().body(publications);
         responseEntity.getHeaders().forEach((headerName, headerValues) ->
                 System.out.println(headerName + ": " + headerValues));
@@ -76,8 +87,9 @@ public class PublicationControllerREST {
             @RequestParam("publique") boolean publique,
             @RequestParam("prix") float prix,
             @RequestParam("image") MultipartFile image,
-            @RequestParam("proprietaire") Long proprietaire,
-            @RequestParam("tags") List<String> tags) {
+            @RequestParam("tags") List<String> tags,
+            @RequestParam("email") String email
+            ) {
 
         // Créer un objet Publication à partir des paramètres
         Publication nouvellePublication = new Publication();
@@ -91,8 +103,12 @@ public class PublicationControllerREST {
         nouvellePublication.setImage("_");
         nouvellePublication.setDateLocal(LocalDateTime.now());
         Publication publication = publicationRepository.save(nouvellePublication);
+        String nouvemail = email.replaceAll("\"", "");
 
-        publication.setImage(isEmpty(image, publication.getId(), proprietaire, titre, "i"));
+        Optional<Utilisateur> utilisateurOptional = Optional.ofNullable(utilisateurRepository.findByEmail(nouvemail));
+        Utilisateur utilisateur = utilisateurOptional.orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé pour l'e-mail " + email));
+
+        publication.setImage(isEmpty(image, publication.getId(), utilisateur.getId(), titre, "i"));
 
         for (String tagNom : tags) {
             String tagNomSansGuillemets = tagNom.replaceAll("\"", "");  // Enlever les guillemets
@@ -108,7 +124,7 @@ public class PublicationControllerREST {
             publication.getTags().add(tag);
             tag.getPublications().add(publication);
         }
-        Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findById(proprietaire);
+
         utilisateurOptional.ifPresent(publication::setProprietaire);
         return publicationRepository.save(publication);
     }
@@ -215,7 +231,7 @@ public class PublicationControllerREST {
                     }
                 }
         );
-
+        
         Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findById(utilisateur_id);
         utilisateurOptional.ifPresent(avis::setUtilisateur);
         utilisateurOptional.ifPresentOrElse(
@@ -232,4 +248,5 @@ public class PublicationControllerREST {
 
         return avisRepository.save(avis);
     }
+
 }

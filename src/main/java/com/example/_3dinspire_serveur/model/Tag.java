@@ -1,5 +1,6 @@
 package com.example._3dinspire_serveur.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -19,6 +20,7 @@ public class Tag {
     @NotBlank
     private String nom;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "tags")
     private Set<Publication> publications = new HashSet<>();
 

@@ -50,6 +50,7 @@ public class Publication {
             joinColumns = @JoinColumn(name = "publication_id"),
             inverseJoinColumns = @JoinColumn(name = "panier_id")
     )
+    @JsonIgnore
     private Set<Panier> paniers = new HashSet<>();
 
     @OneToOne(mappedBy = "publication_notif")
