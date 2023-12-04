@@ -1,6 +1,9 @@
 package com.example._3dinspire_serveur.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -35,18 +38,25 @@ public class Utilisateur {
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
-            name = "abonnements",
-            joinColumns = @JoinColumn(name = "utilisateur_id"),
+            name = "Abonnements",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "abonnement_id")
+    )
+    @JsonIgnore
+    private Set<Utilisateur> Abonnements;
+
+    @ManyToMany
+    @JoinTable(
+            name = "Abonnes",
+            joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "abonne_id")
     )
     @JsonIgnore
-    private Set<Utilisateur> abonnements = new HashSet<>();
-    @ManyToMany(mappedBy = "abonnements",cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    @JsonIgnore
-    private Set<Utilisateur> abonnes = new HashSet<>();
+    private Set<Utilisateur> Abonnes;
 
     @OneToOne
     @JoinColumn(name="profil_id")
+    @JsonIgnore
     private Profil profil;
 
     @OneToMany(mappedBy = "proprietaire")
@@ -65,8 +75,20 @@ public class Utilisateur {
     @JsonIgnore
     private Set<Avis> avis;
 
+    public boolean verifAbonnement(Utilisateur user){
+        return this.getAbonnements().contains(user);
+    }
+    public void deleteAbonnement(Utilisateur user){
+        getAbonnements().remove(user);
+    }
+
     @OneToOne @JoinColumn(name = "panier_user")
+    @JsonIgnore
     private Panier panier;
+
+    public void deleteAbonne(Utilisateur user){
+        getAbonnes().remove(user);
+    }
 
     public Set<Avis> getAvis() {
         return avis;
@@ -74,6 +96,14 @@ public class Utilisateur {
 
     public void setAvis(Set<Avis> avis) {
         this.avis = avis;
+    }
+
+    public void ajouterAbonnement(Utilisateur user){
+        this.Abonnements.add(user);
+    }
+
+    public void ajouterAbonne(Utilisateur user){
+        this.Abonnes.add(user);
     }
 
     public Set<Publication> getPublications() {
@@ -86,55 +116,31 @@ public class Utilisateur {
         this.password = password;
     }
 
+    public void setPublications(Set<Publication> publications) {
+        this.publications = publications;
+    }
+
+    public Profil getProfil() {
+        return profil;
+    }
+
+    public void setProfil(Profil profil) {
+        this.profil = profil;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }
 
-    public Set<Utilisateur> getAbonnements() {
-        return abonnements;
+    public Integer  countAbonnement(){
+        return getAbonnements().size();
     }
 
-    public void setAbonnements(Set<Utilisateur> abonnements) {
-        this.abonnements = abonnements;
-    }
-
-    public Set<Utilisateur> getAbonnes() {
-        return abonnes;
-    }
-
-    public void setAbonnes(Set<Utilisateur> abonnes) {
-        this.abonnes = abonnes;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPseudo() {
-        return pseudo;
-    }
-
-    public void setPseudo(String pseudo) {
-        this.pseudo = pseudo;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Panier getPanier() {
-        return panier;
-    }
-
-    public void setPanier(Panier panier) {
-        this.panier = panier;
+    public Integer countAbonne(){
+        return getAbonnes().size();
     }
 }
