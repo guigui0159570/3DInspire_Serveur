@@ -4,6 +4,7 @@ import com.example._3dinspire_serveur.model.Publication;
 import com.example._3dinspire_serveur.model.Utilisateur;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -21,4 +22,22 @@ public interface PublicationRepository extends CrudRepository<Publication, Long>
 
     @Query("select publication from Publication publication where publication.publique = true order by publication.dateLocal desc ")
     Iterable<Publication> getPublicationByTime();
+
+    @Query("SELECT publication FROM Publication publication " +
+            "LEFT JOIN publication.tags tags " +
+            "WHERE " +
+            "publication.proprietaire.pseudo LIKE %:filtre% OR " +
+            "publication.proprietaire.email LIKE %:filtre% OR " +
+            "publication.titre LIKE %:filtre% OR " +
+            "tags.nom LIKE %:filtre%")
+    Iterable<Publication> getFiltre(@Param("filtre") String filtre);
+
+    @Query("SELECT publication FROM Publication publication " +
+            "LEFT JOIN publication.tags tags " +
+            "WHERE " +
+            "publication.proprietaire = :utilisateur AND "+
+            "publication.titre LIKE %:filtre% OR " +
+            "tags.nom LIKE %:filtre%")
+    Iterable<Publication> getFiltreByUser(@Param("filtre") String filtre,Utilisateur utilisateur);
+
 }

@@ -33,7 +33,7 @@ public class Utilisateur {
     @NotBlank
     private String password;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
             name = "abonnements",
             joinColumns = @JoinColumn(name = "utilisateur_id"),
@@ -41,7 +41,7 @@ public class Utilisateur {
     )
     @JsonIgnore
     private Set<Utilisateur> abonnements = new HashSet<>();
-    @ManyToMany(mappedBy = "abonnements")
+    @ManyToMany(mappedBy = "abonnements",cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JsonIgnore
     private Set<Utilisateur> abonnes = new HashSet<>();
 
@@ -53,7 +53,7 @@ public class Utilisateur {
     @JsonIgnore
     private Set<Publication> publications;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
             name="users_roles",
             joinColumns={@JoinColumn(name="USER_ID", referencedColumnName="ID")},
@@ -61,7 +61,8 @@ public class Utilisateur {
     @JsonIgnore
     private List<Role> roles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)    @JsonIgnore
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Avis> avis;
 
     @OneToOne @JoinColumn(name = "panier_user")

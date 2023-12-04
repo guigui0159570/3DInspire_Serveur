@@ -78,6 +78,29 @@ public class PublicationControllerREST {
 
         return responseEntity;
     }
+    @GetMapping("/getByFiltre")
+    public ResponseEntity<Iterable<Publication>> getByFiltre(@RequestParam("filtre")String filtre){
+        System.out.println(filtre);
+        Iterable<Publication> publications = publicationRepository.getFiltre(filtre);
+        ResponseEntity<Iterable<Publication>> responseEntity = ResponseEntity.ok().body(publications);
+        responseEntity.getHeaders().forEach((headerName, headerValues) ->
+                System.out.println(headerName + ": " + headerValues));
+
+        return responseEntity;
+    }
+
+    @GetMapping("/get/uti/{id}/getFiltreByUser")
+    public ResponseEntity<Iterable<Publication>> getFiltreByUser(@RequestParam("filtre")String filtre,@PathVariable("id") Long id){
+        if (utilisateurRepository.findById(id).isPresent()) {
+            Iterable<Publication> publications = publicationRepository.getFiltreByUser(filtre,utilisateurRepository.findById(id).get());
+            ResponseEntity<Iterable<Publication>> responseEntity = ResponseEntity.ok().body(publications);
+            responseEntity.getHeaders().forEach((headerName, headerValues) ->
+                    System.out.println(headerName + ": " + headerValues));
+            return responseEntity;
+        }
+        else return null;
+
+    }
 
     @PostMapping("/save")
     public Publication savePublication(
@@ -248,5 +271,6 @@ public class PublicationControllerREST {
 
         return avisRepository.save(avis);
     }
+
 
 }
