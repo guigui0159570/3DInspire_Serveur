@@ -1,6 +1,9 @@
 package com.example._3dinspire_serveur.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -35,18 +38,25 @@ public class Utilisateur {
 
     @ManyToMany
     @JoinTable(
-            name = "abonnements",
-            joinColumns = @JoinColumn(name = "utilisateur_id"),
+            name = "Abonnements",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "abonnement_id")
+    )
+    @JsonIgnore
+    private Set<Utilisateur> Abonnements;
+
+    @ManyToMany
+    @JoinTable(
+            name = "Abonnes",
+            joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "abonne_id")
     )
     @JsonIgnore
-    private Set<Utilisateur> abonnements = new HashSet<>();
-    @ManyToMany(mappedBy = "abonnements")
-    @JsonIgnore
-    private Set<Utilisateur> abonnes = new HashSet<>();
+    private Set<Utilisateur> Abonnes;
 
     @OneToOne
     @JoinColumn(name="profil_id")
+    @JsonIgnore
     private Profil profil;
 
     @OneToMany(mappedBy = "proprietaire")
@@ -64,9 +74,20 @@ public class Utilisateur {
     @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)    @JsonIgnore
     private Set<Avis> avis;
 
+    public boolean verifAbonnement(Utilisateur user){
+        return this.getAbonnements().contains(user);
+    }
+    public void deleteAbonnement(Utilisateur user){
+        getAbonnements().remove(user);
+    }
+
     @OneToOne @JoinColumn(name = "panier_user")
     @JsonIgnore
     private Panier panier;
+
+    public void deleteAbonne(Utilisateur user){
+        getAbonnes().remove(user);
+    }
 
     public Set<Avis> getAvis() {
         return avis;
@@ -74,6 +95,14 @@ public class Utilisateur {
 
     public void setAvis(Set<Avis> avis) {
         this.avis = avis;
+    }
+
+    public void ajouterAbonnement(Utilisateur user){
+        this.Abonnements.add(user);
+    }
+
+    public void ajouterAbonne(Utilisateur user){
+        this.Abonnes.add(user);
     }
 
     public Set<Publication> getPublications() {
@@ -86,7 +115,31 @@ public class Utilisateur {
         this.password = password;
     }
 
+    public void setPublications(Set<Publication> publications) {
+        this.publications = publications;
+    }
+
+    public Profil getProfil() {
+        return profil;
+    }
+
+    public void setProfil(Profil profil) {
+        this.profil = profil;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public Integer  countAbonnement(){
+        return getAbonnements().size();
+    }
+
+    public Integer countAbonne(){
+        return getAbonnes().size();
     }
 }

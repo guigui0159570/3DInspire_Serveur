@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Affichage</title>
+</head>
+<body>
+<p>cc</p>
+<table>
+    <tr th:each="personne : ${uti}" th:object="${personne}">
+        <td th:text="*{email}"></td>
+        <td th:text="*{pseudo}"></td>
+        <td><a th:href="@{'http://localhost:8080/abonnenement/102/' + *{id}}">Abonne toi</a></td>
+    </tr>
+</table>
+</body>
+</html>
