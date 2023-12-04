@@ -29,38 +29,120 @@ public class UtilisateurControllerREST {
         utilisateur.setProfil(profil);
         return utilisateurRepository.save(utilisateur);
     }
-
+ // fonction pour s abonner
     @GetMapping("/abonnenement/{user}/{id}")
     public void abonnenement(@PathVariable Long id, @PathVariable Long user){
         Optional<Utilisateur> utilisateur_abonne = utilisateurRepository.findById(id);
         Optional<Utilisateur> utilisateur = utilisateurRepository.findById(user);
         if (utilisateur_abonne.isPresent() && utilisateur.isPresent()){
-            utilisateur.get().ajouterAbonnement(utilisateur_abonne.get());
-            utilisateur_abonne.get().ajouterAbonne(utilisateur.get());
-            utilisateurRepository.save(utilisateur.get());
-            utilisateurRepository.save(utilisateur_abonne.get());
-        }
-    }
-
-    @GetMapping("/userInformation/{user}")
-    public Map<String, String> userInformation(@PathVariable Long user){
-        Map<String, String> informaton = new HashMap<>();
-        Optional<Utilisateur> utilisateur = utilisateurRepository.findById(user);
-        if (utilisateur.isPresent()){
-            utilisateur.get().countAbonne();
-            informaton.put("countAbonnement", String.valueOf(utilisateur.get().countAbonnement()));
-            informaton.put("countAbonne",  String.valueOf(utilisateur.get().countAbonne()));
-            if (utilisateur.get().getProfil().getPhoto() != null) {
-                informaton.put("photo", Base64.getEncoder().encodeToString((utilisateur.get().getProfil().getPhoto())));
-            }else {
-                informaton.put("photo", null);
+            if(!id.equals(user)) {
+                utilisateur.get().ajouterAbonnement(utilisateur_abonne.get());
+                utilisateur_abonne.get().ajouterAbonne(utilisateur.get());
+                utilisateurRepository.save(utilisateur.get());
+                utilisateurRepository.save(utilisateur_abonne.get());
             }
-            informaton.put("pseudo", String.valueOf(utilisateur.get().getPseudo()));
-            informaton.put("description" , utilisateur.get().getProfil().getDescription());
-
         }
-        return informaton;
     }
+
+    // fonction pour se desabonner
+    @GetMapping("/desabonnemnt/{user}/{id}")
+    public void desabonnenement(@PathVariable Long id, @PathVariable Long user){
+        Optional<Utilisateur> utilisateur_abonne = utilisateurRepository.findById(id);
+        Optional<Utilisateur> utilisateur = utilisateurRepository.findById(user);
+        if (utilisateur_abonne.isPresent() && utilisateur.isPresent()){
+            utilisateur.get().deleteAbonnement(utilisateur_abonne.get());
+            utilisateur_abonne.get().deleteAbonne(utilisateur.get());
+            utilisateurRepository.save(utilisateur_abonne.get());
+            utilisateurRepository.save(utilisateur.get());
+        }
+    }
+
+    // fonction pour avoir un json de mon utilisateur
+    @GetMapping("/userInformation/{user}")
+    public Map<String, String> userInformation(@PathVariable Long user) {
+        Map<String, String> information = new HashMap<>();
+        Optional<Utilisateur> utilisateur = utilisateurRepository.findById(user);
+
+        if (utilisateur.isPresent()) {
+            Utilisateur userObj = utilisateur.get();
+
+            information.put("idUtilisateur" , String.valueOf(userObj.getId()));
+            information.put("countAbonnement", String.valueOf(userObj.countAbonnement()));
+            information.put("countAbonne", String.valueOf(userObj.countAbonne()));
+            information.put("pseudo", String.valueOf(userObj.getPseudo()));
+
+            Profil profil = userObj.getProfil();
+            if (profil != null) {
+                information.put("description", profil.getDescription());
+
+                if (profil.getPhoto() != null) {
+                    information.put("photo", Base64.getEncoder().encodeToString(profil.getPhoto()));
+                } else {
+                    information.put("photo", null);
+                }
+            } else {
+                information.put("description", null);
+                information.put("photo", null);
+            }
+        }
+
+        return information;
+    }
+
+    // fonction pour avoir une liste de tout les abonnements d'un utilisateur
+    @GetMapping("/abonnementUser/{userId}")
+    public Set<Map> AbonnementUser(@PathVariable Long userId) {
+        Set<Map> abonnementinfo = new HashSet<>();
+        Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findById(userId);
+        if (utilisateurOptional.isPresent()) {
+            Utilisateur utilisateur = utilisateurOptional.get();
+            for (Utilisateur utilisateur1 : utilisateur.getAbonnements()) {
+                abonnementinfo.add(userInformation(utilisateur1.getId()));
+
+            }
+            return abonnementinfo;
+        } else {
+            // L'utilisateur avec l'ID spécifié n'a pas été trouvé
+            return Collections.emptySet();
+        }
+    }
+
+    // fonction pour avoir une liste de tout les abonnes d'un utilisateur
+
+    @GetMapping("/abonneUser/{userId}")
+    public Set<Map> AbonneUser(@PathVariable Long userId) {
+        Set<Map> abonneinfo = new HashSet<>();
+        Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findById(userId);
+        if (utilisateurOptional.isPresent()) {
+            Utilisateur utilisateur = utilisateurOptional.get();
+            for (Utilisateur utilisateur1 : utilisateur.getAbonnes()) {
+                abonneinfo.add(userInformation(utilisateur1.getId()));
+
+            }
+            return abonneinfo;
+        } else {
+            // L'utilisateur avec l'ID spécifié n'a pas été trouvé
+            return Collections.emptySet();
+        }
+    }
+
+
+    // fonction pour voir si un abonné est présent dans mes abonnements
+    @GetMapping("/presenceAbonne/{userId}/{abonneid}")
+    public boolean presenceAbonne(@PathVariable Long userId, @PathVariable Long abonneid) {
+        Optional<Utilisateur> utilisateur = utilisateurRepository.findById(userId);
+        Optional<Utilisateur> abonneUser = utilisateurRepository.findById(abonneid);
+
+        if (utilisateur.isPresent() && abonneUser.isPresent()) {
+            return utilisateur.get().verifAbonnement(abonneUser.get());
+        } else {
+            return false;
+        }
+    }
+
+
+
+    // fonction pour enregistrer une photo dans la bdd
 
     @PostMapping("/upload/{user}")
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file, @PathVariable Long user) throws IOException {
@@ -85,6 +167,8 @@ public class UtilisateurControllerREST {
     }
 
 
+    // fonction pour enregistrer les string du compte, pseudo, description
+
     @PostMapping("/updateStringProfil/{user}")
     public ResponseEntity<String> handleFileUpload(
             @RequestBody Map<String, String> requestBody, @PathVariable Long user) {
@@ -106,5 +190,6 @@ public class UtilisateurControllerREST {
         }
         return ResponseEntity.ok("OK");
     }
+
 }
 

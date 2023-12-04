@@ -1,9 +1,14 @@
 package com.example._3dinspire_serveur.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import org.apache.catalina.User;
+import org.hibernate.sql.Delete;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,6 +33,7 @@ public class Utilisateur {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "abonnement_id")
     )
+    @JsonIgnore
     private Set<Utilisateur> Abonnements;
 
     @ManyToMany
@@ -36,16 +42,30 @@ public class Utilisateur {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "abonne_id")
     )
+    @JsonIgnore
     private Set<Utilisateur> Abonnes;
 
     @OneToOne
     @JoinColumn(name="profil_id")
+    @JsonIgnore
     private Profil profil;
 
     @OneToMany(mappedBy = "proprietaire")
     @JsonIgnore
     private Set<Publication> publications;
 
+
+
+    public boolean verifAbonnement(Utilisateur user){
+        return this.getAbonnements().contains(user);
+    }
+    public void deleteAbonnement(Utilisateur user){
+        getAbonnements().remove(user);
+    }
+
+    public void deleteAbonne(Utilisateur user){
+        getAbonnes().remove(user);
+    }
 
     public void ajouterAbonnement(Utilisateur user){
         this.Abonnements.add(user);
@@ -83,7 +103,7 @@ public class Utilisateur {
         return Abonnements;
     }
 
-    public Integer countAbonnement(){
+    public Integer  countAbonnement(){
         return getAbonnements().size();
     }
     public void setAbonnements(Set<Utilisateur> abonnements) {
