@@ -2,12 +2,7 @@ package com.example._3dinspire_serveur.controller;
 
 import com.example._3dinspire_serveur.model.Profil;
 import com.example._3dinspire_serveur.model.Utilisateur;
-import com.example._3dinspire_serveur.repository.PanierRepository;
-import com.example._3dinspire_serveur.repository.RoleRepository;
-import com.example._3dinspire_serveur.repository.ProfilRepository;
-import com.example._3dinspire_serveur.repository.UtilisateurRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import com.example._3dinspire_serveur.repository.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -16,17 +11,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.Iterator;
 import java.util.Optional;
 
 @RestController
 public class UtilisateurControllerREST {
     private final UtilisateurRepository utilisateurRepository;
     private final ProfilRepository profilRepository;
+    private final PublicationRepository publicationRepository;
+    private final AvisRepository avisRepository;
 
-    public UtilisateurControllerREST(UtilisateurRepository utilisateurRepository, ProfilRepository profilRepository) {
+    public UtilisateurControllerREST(UtilisateurRepository utilisateurRepository, ProfilRepository profilRepository, PublicationRepository publicationRepository, AvisRepository avisRepository) {
         this.utilisateurRepository = utilisateurRepository;
         this.profilRepository = profilRepository;
+        this.publicationRepository = publicationRepository;
+        this.avisRepository = avisRepository;
     }
 
 
@@ -157,6 +155,9 @@ public class UtilisateurControllerREST {
     @DeleteMapping("/utilisateur/delete/{id}")
     public void deleteUtilisateur( @PathVariable("id") Long id) {
         try {
+            avisRepository.deleteAvisByUtilisateurId(id);
+            publicationRepository.deletePublicationByProprietaire(id);
+            profilRepository.deleteProfilByUtilisateurId(id);
             utilisateurRepository.deleteById(id);
             System.out.println("Utilisateur supprimé avec succès.");
         } catch (Exception e) {

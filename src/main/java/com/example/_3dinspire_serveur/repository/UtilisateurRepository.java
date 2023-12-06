@@ -12,6 +12,6 @@ import java.util.List;
 @Repository
 public interface UtilisateurRepository extends CrudRepository<Utilisateur, Long> {
 
-
-
+    Utilisateur findByEmail(String nouvemail);
+    Utilisateur findByResetToken(String resetToken);
 }

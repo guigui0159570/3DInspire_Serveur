@@ -2,6 +2,8 @@ package com.example._3dinspire_serveur.repository;
 
 import com.example._3dinspire_serveur.model.Publication;
 import com.example._3dinspire_serveur.model.Utilisateur;
+import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 
 @Repository
 public interface PublicationRepository extends CrudRepository<Publication, Long> {
+
     @Query("select publication from Publication publication where publication.proprietaire = :utilisateur order by publication.dateLocal desc")
     Iterable<Publication> getPublicationByProprietaireId(Utilisateur utilisateur);
 
@@ -39,5 +42,10 @@ public interface PublicationRepository extends CrudRepository<Publication, Long>
             "publication.titre LIKE %:filtre% OR " +
             "tags.nom LIKE %:filtre%")
     Iterable<Publication> getFiltreByUser(@Param("filtre") String filtre,Utilisateur utilisateur);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM Publication p WHERE p.proprietaire.id = :id")
+    void deletePublicationByProprietaire(@Param("id") Long id);
 
 }

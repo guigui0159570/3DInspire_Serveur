@@ -35,6 +35,7 @@ public class Utilisateur {
     private String pseudo;
     @NotBlank
     private String password;
+    private String resetToken;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
@@ -45,7 +46,7 @@ public class Utilisateur {
     @JsonIgnore
     private Set<Utilisateur> Abonnements;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
             name = "Abonnes",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -143,4 +144,5 @@ public class Utilisateur {
     public Integer countAbonne(){
         return getAbonnes().size();
     }
+
 }

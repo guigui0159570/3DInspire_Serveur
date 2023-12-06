@@ -16,6 +16,11 @@ public interface AvisRepository extends CrudRepository<Avis, Long> {
     @Query(value = "DELETE FROM Avis avis WHERE avis.publication.id = :id")
     void deleteAvisByPublicationId(@Param("id") Long id);
 
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM Avis avis WHERE avis.utilisateur.id = :id")
+    void deleteAvisByUtilisateurId(@Param("id") Long id);
+
     @Query("select avis from Avis avis where avis.publication = :publication")
     Iterable<Avis> getAvisByPublicationId(Publication publication);
     @Query("select avis from Avis avis where avis.utilisateur = :utilisateur")

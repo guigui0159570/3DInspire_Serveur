@@ -18,6 +18,7 @@ public class UtilisateurDTO {
     private String pseudo;
     @NotBlank
     private String password;
+    private String resetToken;
 
     // No password field in DTO to enhance security
 
@@ -35,6 +36,14 @@ public class UtilisateurDTO {
         this.password = password;
     }
 
+    public UtilisateurDTO(String email, String pseudo, String password,String resetToken) {
+        this.email = email;
+        this.pseudo = pseudo;
+        this.password = password;
+        this.resetToken = resetToken;
+    }
+
+
     public UtilisateurDTO(Long id, String email, String pseudo, Set<Utilisateur> abonnementsIds, Set<Utilisateur> abonnesIds, Set<Publication> publicationsIds, Set<Avis> avisIds) {
         this.id = id;
         this.email = email;
@@ -48,6 +57,7 @@ public class UtilisateurDTO {
         this.id = utilisateur.getId();
         this.email = utilisateur.getEmail();
         this.pseudo = utilisateur.getPseudo();
+        this.resetToken = utilisateur.getResetToken();
         setAbonnementsIds(utilisateur.getAbonnements());
         setAbonnesIds(utilisateur.getAbonnes());
         setAvisIds(utilisateur.getAvis());
@@ -126,5 +136,13 @@ public class UtilisateurDTO {
         for (Avis v:avis) {
             this.avisIds.add(v.getId());
         }
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
     }
 }
