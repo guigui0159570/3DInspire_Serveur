@@ -90,9 +90,9 @@ public class PublicationControllerREST {
     }
 
     @GetMapping("/get/uti/{id}/getFiltreByUser")
-    public ResponseEntity<Iterable<Publication>> getFiltreByUser(@RequestParam("filtre")String filtre,@PathVariable("id") Long id){
+    public ResponseEntity<Iterable<Publication>> getFiltreByUser(@PathVariable("id") Long id,@RequestParam("filtre")String filtre){
         if (utilisateurRepository.findById(id).isPresent()) {
-            Iterable<Publication> publications = publicationRepository.getFiltreByUser(filtre,utilisateurRepository.findById(id).get());
+            Iterable<Publication> publications = publicationRepository.getFiltreByUser(filtre,id);
             ResponseEntity<Iterable<Publication>> responseEntity = ResponseEntity.ok().body(publications);
             responseEntity.getHeaders().forEach((headerName, headerValues) ->
                     System.out.println(headerName + ": " + headerValues));
@@ -151,6 +151,8 @@ public class PublicationControllerREST {
         utilisateurOptional.ifPresent(publication::setProprietaire);
         return publicationRepository.save(publication);
     }
+
+
 
     public String isEmpty(MultipartFile object, long publication_id, long proprietaire_id, String titre, String type){
         if (object.isEmpty()) {

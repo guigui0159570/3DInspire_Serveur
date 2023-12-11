@@ -1,5 +1,6 @@
 package com.example._3dinspire_serveur.repository;
 
+import com.example._3dinspire_serveur.model.Panier;
 import com.example._3dinspire_serveur.model.Publication;
 import com.example._3dinspire_serveur.model.Utilisateur;
 import jakarta.transaction.Transactional;
@@ -35,17 +36,17 @@ public interface PublicationRepository extends CrudRepository<Publication, Long>
             "tags.nom LIKE %:filtre%")
     Iterable<Publication> getFiltre(@Param("filtre") String filtre);
 
-    @Query("SELECT publication FROM Publication publication " +
+    @Query("SELECT DISTINCT publication FROM Publication publication " +
             "LEFT JOIN publication.tags tags " +
             "WHERE " +
-            "publication.proprietaire = :utilisateur AND "+
-            "publication.titre LIKE %:filtre% OR " +
-            "tags.nom LIKE %:filtre%")
-    Iterable<Publication> getFiltreByUser(@Param("filtre") String filtre,Utilisateur utilisateur);
+            "(publication.proprietaire.id = :id) AND " +
+            "(publication.titre LIKE %:filtre% OR tags.nom LIKE %:filtre%)")
+    Iterable<Publication> getFiltreByUser(@Param("filtre") String filtre, @Param("id") Long id);
 
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM Publication p WHERE p.proprietaire.id = :id")
     void deletePublicationByProprietaire(@Param("id") Long id);
+
 
 }

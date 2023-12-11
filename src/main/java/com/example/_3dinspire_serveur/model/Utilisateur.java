@@ -75,6 +75,9 @@ public class Utilisateur {
     @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Avis> avis;
+    @OneToMany(mappedBy = "utilisateur")
+    @JsonIgnore
+    private Set<Panier> paniers;
 
     public boolean verifAbonnement(Utilisateur user){
         return this.getAbonnements().contains(user);
@@ -83,9 +86,7 @@ public class Utilisateur {
         getAbonnements().remove(user);
     }
 
-    @OneToOne @JoinColumn(name = "panier_user")
-    @JsonIgnore
-    private Panier panier;
+
 
     public void deleteAbonne(Utilisateur user){
         getAbonnes().remove(user);

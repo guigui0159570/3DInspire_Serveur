@@ -14,4 +14,6 @@ public interface UtilisateurRepository extends CrudRepository<Utilisateur, Long>
 
     Utilisateur findByEmail(String nouvemail);
     Utilisateur findByResetToken(String resetToken);
+
+    boolean existsByResetToken(String resetToken);
 }

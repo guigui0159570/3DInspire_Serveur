@@ -16,8 +16,10 @@ public class Panier {
     @NotNull
     private boolean etat;
 
-    @OneToOne(mappedBy = "panier")
-    private Utilisateur proprietaire;
+    @NotNull
+    @ManyToOne
+    @JoinColumn
+    private Utilisateur utilisateur;
 
 
     @ManyToMany(mappedBy = "paniers")
@@ -27,7 +29,7 @@ public class Panier {
     public Panier(float prixTT, boolean etat, Utilisateur proprietaire, Set<Publication> publications) {
         this.prixTT = prixTT;
         this.etat = etat;
-        this.proprietaire = proprietaire;
+        this.utilisateur = proprietaire;
         this.publications = publications;
     }
 
@@ -67,10 +69,10 @@ public class Panier {
     }
 
     public Utilisateur getProprietaire() {
-        return proprietaire;
+        return utilisateur;
     }
 
     public void setProprietaire(Utilisateur proprietaire) {
-        this.proprietaire = proprietaire;
+        this.utilisateur = proprietaire;
     }
 }

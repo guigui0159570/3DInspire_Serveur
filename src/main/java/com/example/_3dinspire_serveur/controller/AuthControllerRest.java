@@ -172,7 +172,7 @@ public class AuthControllerRest {
             message.setFrom("3dinspire10@gmail.com");
             message.setTo(to);
             message.setSubject("Réinitialisation de mot de passe");
-            String resetLink = "http://10.6.2.252:8080/api/auth/mail-password";
+            String resetLink = "http://10.6.2.252:8080/api/auth/mail-password?token="+resetToken;
             message.setText("Cliquez sur le lien suivant pour réinitialiser votre mot de passe: \n" + resetLink);
 
             System.out.println("About to send email...");
@@ -186,18 +186,7 @@ public class AuthControllerRest {
         }
     }
 
-   /* @PostMapping("/completePasswordReset")
-    public ResponseEntity<Void> completePasswordReset(
-            @RequestParam String resetToken,
-            @RequestParam String newPassword) {
-        // Recherchez l'utilisateur associé au jeton de réinitialisation
-        Utilisateur user = userService.findByResetToken(resetToken);
 
-        if (user == null) {
-            // Gérer le cas où le jeton est invalide ou expiré
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }*/
 
 
 }

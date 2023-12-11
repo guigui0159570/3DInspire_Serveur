@@ -13,4 +13,9 @@ public interface UserRespository extends CrudRepository<Utilisateur, Long> {
     @Modifying
     @Query(value = "UPDATE Utilisateur u set u.resetToken = :token WHERE u.email = :email")
     void UpdateTokenUtilisateur(@Param("token") String token,@Param("email") String email);
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE Utilisateur u set u.password = :password WHERE u.resetToken = :token")
+    void UpdatePasswordUtilisateur(@Param("password") String password,@Param("token") String token);
 }
