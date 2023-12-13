@@ -79,17 +79,20 @@ public class Utilisateur {
     @JsonIgnore
     private Set<Panier> paniers;
 
-    public boolean verifAbonnement(Utilisateur user){
-        return this.getAbonnements().contains(user);
-    }
-    public void deleteAbonnement(Utilisateur user){
-        getAbonnements().remove(user);
-    }
+
+
 
 
 
     public void deleteAbonne(Utilisateur user){
         getAbonnes().remove(user);
+    }
+
+    public boolean verifAbonnement(Utilisateur user){
+        return this.getAbonnements().contains(user);
+    }
+    public void deleteAbonnement(Utilisateur user){
+        getAbonnements().remove(user);
     }
 
     public Set<Avis> getAvis() {

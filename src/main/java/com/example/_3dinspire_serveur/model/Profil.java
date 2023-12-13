@@ -12,13 +12,12 @@ public class Profil {
 
     private String description;
 
-
-    private byte[] photo;
+    private String photo;
 
     @OneToOne(mappedBy = "profil")
     private Utilisateur utilisateur;
 
-    public Profil(String description, byte[] photo, Utilisateur utilisateur) {
+    public Profil(String description, String photo, Utilisateur utilisateur) {
         this.description = description;
         this.photo = photo;
         this.utilisateur = utilisateur;
@@ -44,11 +43,11 @@ public class Profil {
         this.description = description;
     }
 
-    public byte[] getPhoto() {
+    public String getPhoto() {
         return photo;
     }
 
-    public void setPhoto(byte[] photo) {
+    public void setPhoto(String photo) {
         this.photo = photo;
     }
 

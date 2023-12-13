@@ -34,6 +34,9 @@ public class FichiersController {
     @Value("${file.upload-dir-image}")
     private String uploadDirImage;
 
+    @Value("${file.upload-dir-image-profil}")
+    private String uploadDirImageProfil;
+
     @GetMapping("/model/{nomFichier:.+}")
     public ResponseEntity<Resource> getModel(@PathVariable String nomFichier) throws MalformedURLException {
         Pattern pattern = Pattern.compile("_(\\d+)_");
