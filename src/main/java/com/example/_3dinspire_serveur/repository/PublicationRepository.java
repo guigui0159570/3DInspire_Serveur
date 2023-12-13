@@ -48,5 +48,12 @@ public interface PublicationRepository extends CrudRepository<Publication, Long>
     @Query(value = "DELETE FROM Publication p WHERE p.proprietaire.id = :id")
     void deletePublicationByProprietaire(@Param("id") Long id);
 
+    @Query("SELECT DISTINCT publication FROM Publication publication " +
+            "JOIN publication.paniers panier " +
+            "WHERE panier.idPanier = :id")
+    Iterable<Publication> getPublicationByPanier(@Param("id") Long id);
+
+
+    Publication getPublicationById (@Param("id") Long id);
 
 }

@@ -44,7 +44,7 @@ public class Publication {
     @JsonIgnore
     private List<Avis> avis = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REFRESH})
     @JoinTable(
             name = "publication_panier",
             joinColumns = @JoinColumn(name = "publication_id"),

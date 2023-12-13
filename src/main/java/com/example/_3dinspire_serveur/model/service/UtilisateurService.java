@@ -11,6 +11,7 @@ public interface UtilisateurService {
 
     Utilisateur findUserByEmail(String email);
 
+
     List<UtilisateurDTO> findAllUsers();
 
     Utilisateur findByResetToken(String resetToken);

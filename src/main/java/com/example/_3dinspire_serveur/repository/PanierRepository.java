@@ -14,7 +14,7 @@ public interface PanierRepository extends CrudRepository<Panier, Long> {
     @Query("select panier.publications from Panier panier where panier.utilisateur.email = :utilisateur")
     Iterable<Publication> getPanier(String utilisateur);
 
-    Panier findPanierByUtilisateur(Utilisateur utilisateur);
+    Panier findPanierByUtilisateurAndEtatIsFalse(Utilisateur utilisateur);
 
     @Query("select panier.prixTT from Panier panier where panier.idPanier = :id")
     Float getPrixByPanier(Long id);
