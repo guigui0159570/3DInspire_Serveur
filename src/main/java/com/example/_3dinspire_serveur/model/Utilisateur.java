@@ -35,8 +35,9 @@ public class Utilisateur {
     private String pseudo;
     @NotBlank
     private String password;
+    private String resetToken;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
             name = "Abonnements",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -45,7 +46,7 @@ public class Utilisateur {
     @JsonIgnore
     private Set<Utilisateur> Abonnements;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
             name = "Abonnes",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -63,7 +64,7 @@ public class Utilisateur {
     @JsonIgnore
     private Set<Publication> publications;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
             name="users_roles",
             joinColumns={@JoinColumn(name="USER_ID", referencedColumnName="ID")},
@@ -71,15 +72,17 @@ public class Utilisateur {
     @JsonIgnore
     private List<Role> roles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)    @JsonIgnore
-    private Set<Avis> avis;
-
-
-
-
-    @OneToOne @JoinColumn(name = "panier_user")
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private Panier panier;
+    private Set<Avis> avis;
+    @OneToMany(mappedBy = "utilisateur")
+    @JsonIgnore
+    private Set<Panier> paniers;
+
+
+
+
+
 
     public void deleteAbonne(Utilisateur user){
         getAbonnes().remove(user);
@@ -145,4 +148,5 @@ public class Utilisateur {
     public Integer countAbonne(){
         return getAbonnes().size();
     }
+
 }

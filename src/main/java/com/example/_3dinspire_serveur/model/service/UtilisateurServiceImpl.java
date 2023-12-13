@@ -42,6 +42,8 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         return userRepository.save(user);
     }
 
+
+
     public Utilisateur setAdmin(Utilisateur utilisateur){
         Role role = roleRepository.findByName("ROLE_ADMIN");
         if(role == null){
@@ -63,6 +65,12 @@ public class UtilisateurServiceImpl implements UtilisateurService {
                 .map(user -> mapToUserDto(user))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Utilisateur findByResetToken(String resetToken) {
+        return userRepository.findByResetToken(resetToken);
+    }
+
 
     private UtilisateurDTO mapToUserDto(Utilisateur user){
         UtilisateurDTO userDto = new UtilisateurDTO();

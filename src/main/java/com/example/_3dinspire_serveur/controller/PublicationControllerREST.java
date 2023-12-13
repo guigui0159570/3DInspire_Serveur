@@ -78,6 +78,29 @@ public class PublicationControllerREST {
 
         return responseEntity;
     }
+    @GetMapping("/getByFiltre")
+    public ResponseEntity<Iterable<Publication>> getByFiltre(@RequestParam("filtre")String filtre){
+        System.out.println(filtre);
+        Iterable<Publication> publications = publicationRepository.getFiltre(filtre);
+        ResponseEntity<Iterable<Publication>> responseEntity = ResponseEntity.ok().body(publications);
+        responseEntity.getHeaders().forEach((headerName, headerValues) ->
+                System.out.println(headerName + ": " + headerValues));
+
+        return responseEntity;
+    }
+
+    @GetMapping("/get/uti/{id}/getFiltreByUser")
+    public ResponseEntity<Iterable<Publication>> getFiltreByUser(@PathVariable("id") Long id,@RequestParam("filtre")String filtre){
+        if (utilisateurRepository.findById(id).isPresent()) {
+            Iterable<Publication> publications = publicationRepository.getFiltreByUser(filtre,id);
+            ResponseEntity<Iterable<Publication>> responseEntity = ResponseEntity.ok().body(publications);
+            responseEntity.getHeaders().forEach((headerName, headerValues) ->
+                    System.out.println(headerName + ": " + headerValues));
+            return responseEntity;
+        }
+        else return null;
+
+    }
 
     @PostMapping("/save")
     public Publication savePublication(
@@ -128,6 +151,8 @@ public class PublicationControllerREST {
         utilisateurOptional.ifPresent(publication::setProprietaire);
         return publicationRepository.save(publication);
     }
+
+
 
     public String isEmpty(MultipartFile object, long publication_id, long proprietaire_id, String titre, String type){
         if (object.isEmpty()) {
@@ -248,5 +273,6 @@ public class PublicationControllerREST {
 
         return avisRepository.save(avis);
     }
+
 
 }

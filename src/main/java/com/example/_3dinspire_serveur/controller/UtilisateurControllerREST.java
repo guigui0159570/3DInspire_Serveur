@@ -2,8 +2,8 @@ package com.example._3dinspire_serveur.controller;
 
 import com.example._3dinspire_serveur.model.Profil;
 import com.example._3dinspire_serveur.model.Utilisateur;
-import com.example._3dinspire_serveur.repository.ProfilRepository;
-import com.example._3dinspire_serveur.repository.UtilisateurRepository;
+import com.example._3dinspire_serveur.repository.*;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.Optional;
 
 @RestController
 public class UtilisateurControllerREST {
@@ -31,10 +32,14 @@ public class UtilisateurControllerREST {
     private String uploadDirImageProfil;
     private final UtilisateurRepository utilisateurRepository;
     private final ProfilRepository profilRepository;
+    private final PublicationRepository publicationRepository;
+    private final AvisRepository avisRepository;
 
-    public UtilisateurControllerREST(UtilisateurRepository utilisateurRepository, ProfilRepository profilRepository) {
+    public UtilisateurControllerREST(UtilisateurRepository utilisateurRepository, ProfilRepository profilRepository, PublicationRepository publicationRepository, AvisRepository avisRepository) {
         this.utilisateurRepository = utilisateurRepository;
         this.profilRepository = profilRepository;
+        this.publicationRepository = publicationRepository;
+        this.avisRepository = avisRepository;
     }
 
 
@@ -158,6 +163,28 @@ public class UtilisateurControllerREST {
             return false;
         }
     }
+
+    @GetMapping("/getUtilisateurIdByEmail")
+    public Long getUtilisateurIdByEmail(@RequestParam String email) {
+        Utilisateur utilisateur = utilisateurRepository.findByEmail(email);
+        return utilisateur.getId();
+    }
+
+    @Transactional
+    @DeleteMapping("/utilisateur/delete/{id}")
+    public void deleteUtilisateur( @PathVariable("id") Long id) {
+        try {
+            avisRepository.deleteAvisByUtilisateurId(id);
+            publicationRepository.deletePublicationByProprietaire(id);
+            profilRepository.deleteProfilByUtilisateurId(id);
+            utilisateurRepository.deleteById(id);
+            System.out.println("Utilisateur supprimé avec succès.");
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la suppression de l'utilisateur.");
+        }
+    }
+
+
 
 
 
