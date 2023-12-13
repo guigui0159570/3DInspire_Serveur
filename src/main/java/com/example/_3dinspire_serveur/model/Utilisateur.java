@@ -74,12 +74,8 @@ public class Utilisateur {
     @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)    @JsonIgnore
     private Set<Avis> avis;
 
-    public boolean verifAbonnement(Utilisateur user){
-        return this.getAbonnements().contains(user);
-    }
-    public void deleteAbonnement(Utilisateur user){
-        getAbonnements().remove(user);
-    }
+
+
 
     @OneToOne @JoinColumn(name = "panier_user")
     @JsonIgnore
@@ -87,6 +83,13 @@ public class Utilisateur {
 
     public void deleteAbonne(Utilisateur user){
         getAbonnes().remove(user);
+    }
+
+    public boolean verifAbonnement(Utilisateur user){
+        return this.getAbonnements().contains(user);
+    }
+    public void deleteAbonnement(Utilisateur user){
+        getAbonnements().remove(user);
     }
 
     public Set<Avis> getAvis() {
