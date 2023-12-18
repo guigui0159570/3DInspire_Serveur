@@ -55,5 +55,7 @@ public interface PublicationRepository extends CrudRepository<Publication, Long>
 
 
     Publication getPublicationById (@Param("id") Long id);
+    @Query("SELECT publication.proprietaire FROM Publication publication WHERE publication.id = :id")
+    Utilisateur findUserPublication(@Param("id") Long id);
 
 }

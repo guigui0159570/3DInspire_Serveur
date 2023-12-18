@@ -167,6 +167,7 @@ public class UtilisateurControllerREST {
     @GetMapping("/getUtilisateurIdByEmail")
     public Long getUtilisateurIdByEmail(@RequestParam String email) {
         Utilisateur utilisateur = utilisateurRepository.findByEmail(email);
+        System.out.println(utilisateur.getId());
         return utilisateur.getId();
     }
 
@@ -265,34 +266,55 @@ public class UtilisateurControllerREST {
         Optional<Utilisateur> utilisateur = utilisateurRepository.findById(user);
         try {
             if (utilisateur.isPresent()) {
-                if (utilisateur.get().getProfil().getPhoto() != null) {
-                    Path filePath = Paths.get(uploadDirImageProfil).resolve(utilisateur.get().getProfil().getPhoto()).normalize();
+                if (utilisateur.get().getProfil() != null) {
 
-                    // Vérifier si le fichier existe avant de le supprimer
-                    if (Files.exists(filePath)) {
-                        Files.delete(filePath);
-                        System.out.println("supprime");
-                    } else {
-                        System.out.println("erreur");
+                    if (utilisateur.get().getProfil().getPhoto() != null) {
+                        Path filePath = Paths.get(uploadDirImageProfil).resolve(utilisateur.get().getProfil().getPhoto()).normalize();
+
+                        // Vérifier si le fichier existe avant de le supprimer
+                        if (Files.exists(filePath)) {
+                            Files.delete(filePath);
+                            System.out.println("supprime");
+                        } else {
+                            System.out.println("erreur");
+                        }
                     }
+                    // Construire le chemin complet pour le nouveau fichier
+                    Path targetLocation = Path.of(uploadDirImageProfil).resolve(file.getOriginalFilename());
+
+                    utilisateur.get().getProfil().setPhoto(file.getOriginalFilename());
+                    utilisateurRepository.save(utilisateur.get());
+                    // Copier le fichier dans le répertoire de destination
+                    Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+                    System.out.println("Fichier enregistré avec succès à : " + targetLocation);
+
+                    return ResponseEntity.ok("Fichier téléchargé avec succès!");
+                } else {
+                    // Construire le chemin complet pour le nouveau fichier
+                    Path targetLocation = Path.of(uploadDirImageProfil).resolve(file.getOriginalFilename());
+
+                    utilisateur.get().getProfil().setPhoto(file.getOriginalFilename());
+                    utilisateurRepository.save(utilisateur.get());
+                    // Copier le fichier dans le répertoire de destination
+                    Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+                    System.out.println("Fichier enregistré avec succès à : " + targetLocation);
+                    Profil profil = new Profil(null, file.getOriginalFilename(), null);
+                    utilisateur.get().setProfil(profil);
+                    profilRepository.save(profil);
+                    utilisateurRepository.save(utilisateur.get());
+                    return ResponseEntity.ok("Fichier téléchargé avec succès!");
                 }
-                // Construire le chemin complet pour le nouveau fichier
-                Path targetLocation = Path.of(uploadDirImageProfil).resolve(file.getOriginalFilename());
 
-                utilisateur.get().getProfil().setPhoto(file.getOriginalFilename());
-                utilisateurRepository.save(utilisateur.get());
-                // Copier le fichier dans le répertoire de destination
-                Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-
-                System.out.println("Fichier enregistré avec succès à : " + targetLocation);
-
-                return ResponseEntity.ok("Fichier téléchargé avec succès!");
             }
+
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Erreur lors de la suppression du fichier.");
         }
         return null;
     }
+
 }
 

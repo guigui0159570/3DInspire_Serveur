@@ -5,12 +5,14 @@ import com.example._3dinspire_serveur.model.Publication;
 import com.example._3dinspire_serveur.model.Utilisateur;
 import com.example._3dinspire_serveur.model.service.UtilisateurService;
 import com.example._3dinspire_serveur.repository.*;
+import org.apache.catalina.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @RestController
@@ -19,14 +21,15 @@ public class PanierControllerRest {
     private UtilisateurService utilisateurRepository;
     private PanierRepository panierRepository;
     private AvisRepository avisRepository;
-
+    private UserRespository userRespository;
     private PublicationRepository publicationRepository;
 
-    public PanierControllerRest(UtilisateurService utilisateurRepository, PanierRepository panierRepository, PublicationRepository publicationRepository,AvisRepository avisRepository) {
+    public PanierControllerRest(UtilisateurService utilisateurRepository, PanierRepository panierRepository, PublicationRepository publicationRepository,AvisRepository avisRepository,UserRespository userRespository) {
         this.utilisateurRepository = utilisateurRepository;
         this.panierRepository = panierRepository;
         this.publicationRepository = publicationRepository;
         this.avisRepository =avisRepository;
+        this.userRespository = userRespository;
     }
 
     @GetMapping("/getPublicationPanier")
@@ -81,11 +84,12 @@ public class PanierControllerRest {
     }
 
     @PostMapping("/ajoutPublication")
-    public ResponseEntity<String> ajoutPublicationPanier(@RequestParam("email") String email, @RequestParam("idPub") Long idPub) {
+    public ResponseEntity<Void> ajoutPublicationPanier(@RequestParam("email") String email, @RequestParam("idPub") Long idPub) {
         Utilisateur utilisateur = utilisateurRepository.findUserByEmail(email);
 
         if (utilisateur == null) {
-            return new ResponseEntity<>("Utilisateur non trouvé", HttpStatus.NOT_FOUND);
+            System.out.println("Utilisateur non trouvé");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
         Panier panier = panierRepository.findPanierByUtilisateurAndEtatIsFalse(utilisateur);
@@ -98,19 +102,23 @@ public class PanierControllerRest {
         }
 
         Publication publication = publicationRepository.findById(idPub).orElse(null);
-
+        Utilisateur UserPub = publicationRepository.findUserPublication(idPub);
         if (publication == null) {
-            return new ResponseEntity<>("Publication non trouvée", HttpStatus.NOT_FOUND);
+            System.out.println("Publication non trouvée");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-
         // Vérifier si la publication n'est pas déjà dans le panier
-        if (!panier.getPublications().contains(publication) && !publication.isGratuit()) {
-            panier.getPublications().add(publication);
+        if (!panier.getPublications().contains(publication) && !publication.isGratuit() && !Objects.equals(UserPub.getEmail(), email)) {
+            publication.getPaniers().add(panier);
             panier.setPrixTT(prixAvantAjout+publication.getPrix());
             panierRepository.save(panier);
-            return new ResponseEntity<>("Publication ajoutée au panier avec succès", HttpStatus.OK);
+            publicationRepository.save(publication);
+            System.out.println("Publication ajoutée au panier avec succès");
+            return ResponseEntity.ok().body(null);
         } else {
-            return new ResponseEntity<>("La publication est déjà dans le panier", HttpStatus.BAD_REQUEST);
+            System.out.println("La publication est déjà dans le panier");
+            System.out.println("L'utilisateur est le propriétaire de la publication");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 

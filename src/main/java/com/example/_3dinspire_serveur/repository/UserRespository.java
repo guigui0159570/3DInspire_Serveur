@@ -1,5 +1,6 @@
 package com.example._3dinspire_serveur.repository;
 
+import com.example._3dinspire_serveur.model.Publication;
 import com.example._3dinspire_serveur.model.Utilisateur;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
