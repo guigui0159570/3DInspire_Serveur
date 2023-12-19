@@ -58,4 +58,7 @@ public interface PublicationRepository extends CrudRepository<Publication, Long>
     @Query("SELECT publication.proprietaire FROM Publication publication WHERE publication.id = :id")
     Utilisateur findUserPublication(@Param("id") Long id);
 
+    Publication getDistinctFirstByProprietaireId(Long id);
+
+    void deletePublicationByProprietaire(Utilisateur utilisateur);
 }

@@ -66,4 +66,14 @@ public class Avis {
     public void setPublication(Publication publication) {
         this.publication = publication;
     }
+
+    public Avis(String commentaire, int etoile, Publication publication, Utilisateur utilisateur) {
+        this.commentaire = commentaire;
+        this.etoile = etoile;
+        this.publication = publication;
+        this.utilisateur = utilisateur;
+    }
+
+    public Avis() {
+    }
 }

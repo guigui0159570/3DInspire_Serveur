@@ -28,7 +28,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     }
 
     @Override
-    public Utilisateur saveUser(UtilisateurDTO userDto) {
+    public Utilisateur saveUser(UtilisateurDTO userDto, boolean admin) {
         Utilisateur user = new Utilisateur();
         user.setPseudo(userDto.getPseudo());
         user.setEmail(userDto.getEmail());
@@ -37,6 +37,12 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         Role role = roleRepository.findByName("ROLE_USER");
         if(role == null){
             role = checkRoleUserExist();
+        }
+        if (admin){
+            role = roleRepository.findByName("ROLE_ADMIN");
+            if(role == null){
+                role = checkRoleUserExist();
+            }
         }
         user.setRoles(Arrays.asList(role));
         return userRepository.save(user);

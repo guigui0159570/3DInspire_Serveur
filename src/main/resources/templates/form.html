@@ -22,6 +22,7 @@
     <input disabled th:field="*{id}" placeholder="id">
     <input th:field="*{titre}" placeholder="Titre">
     <input th:field="*{description}" placeholder="Description">
+    <input th:field="*{tags}" placeholder="Tags">
     <label for="gratuit">Gratuit :</label>
     <input id="gratuit" type="checkbox" th:field="*{gratuit}" placeholder="Gratuit" checked>
     <div id="prixDiv" style="display: none;">
@@ -45,6 +46,7 @@
     <label for="fichier">Fichier :</label>
     <input id="fichier" type="file" th:field="*{fichier}" placeholder="Fichier 3D" accept=".obj, .3ds, .sldprt, .scad, .blend, .3mf, .gcode, .skp, .fbx">
     <input type="number" th:field="*{proprietaire}" placeholder="ID proprio">
+    <input name="email" placeholder="Email">
     <input type="submit">
 </form>
 <h1>Avis:</h1><br>

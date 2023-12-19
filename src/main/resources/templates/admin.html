@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home Admin</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css"/>
+</head>
+<body>
+<div style="flex: auto; overflow-y: auto;">
+    <script>
+        function deleteUtilisateur(userId) {
+            if (confirm("Voulez-vous vraiment supprimer cet utilisateur?")) {
+                fetch(`/api/admin/utilisateur/delete/${userId}`, {
+                    method: 'DELETE',
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur lors de la suppression de l\'utilisateur.');
+                        }
+                        console.log('Utilisateur supprimé avec succès.');
+                        // Rafraîchissez votre interface utilisateur si nécessaire
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error(error.message);
+                    });
+            }
+        }
+
+        function deletePublication(publicationId) {
+            if (confirm("Voulez-vous vraiment supprimer cette publication?")) {
+                console.log("Dans la fonction")
+                fetch(`/api/admin/publication/delete/${publicationId}`, {
+                    method: 'DELETE',
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur lors de la suppression de la publication.');
+                        }
+                        console.log('Publication supprimée avec succès.');
+                        // Rafraîchissez votre interface utilisateur si nécessaire
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error(error.message);
+                    });
+            }
+        }
+    </script>
+    <table style="display: inline-block;">
+        <thead>
+        <tr>
+            <th colspan="4" style="text-align: center">Utilisateurs</th>
+        </tr>
+        <tr>
+            <th>ID</th>
+            <th>Pseudo</th>
+            <th>Email</th>
+            <th>
+                <img style="width: 15px; height: 20px;" src="https://static.vecteezy.com/system/resources/previews/021/352/964/original/trash-icon-recycle-and-trash-sign-symbol-icon-free-png.png" alt="Trash">
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.pseudo}"></td>
+            <td th:text="${user.email}"></td>
+            <td>
+                <button th:attr="onclick='deleteUtilisateur(\'' + ${user.id} + '\')'">
+                    <img style="width: 15px; height: 20px;" src="https://static.vecteezy.com/system/resources/previews/021/352/964/original/trash-icon-recycle-and-trash-sign-symbol-icon-free-png.png" alt="Trash">
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table style="display: inline-block;">
+        <thead>
+        <tr>
+            <th colspan="3" style="text-align: center">Publication</th>
+            <th colspan="2" style="text-align: center">Propriétaire</th>
+            <th style="text-align: center">Action</th>
+        </tr>
+        <tr>
+            <th>ID</th>
+            <th>Titre</th>
+            <th>Description</th>
+            <th>Pseudo</th>
+            <th>Email</th>
+            <th>
+                <img style="width: 15px; height: 20px;" src="https://static.vecteezy.com/system/resources/previews/021/352/964/original/trash-icon-recycle-and-trash-sign-symbol-icon-free-png.png">
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="pub : ${publications}">
+            <td th:text="${pub.id}"></td>
+            <td th:text="${pub.titre}"></td>
+            <td th:text="${pub.description}"></td>
+
+            <td th:if="${not #strings.isEmpty(pub.proprietaire)}" th:object="${pub.proprietaire}">
+                <span th:text="*{pseudo}"></span>
+            </td>
+            <td th:unless="${not #strings.isEmpty(pub.proprietaire)}"></td>
+
+            <td th:if="${not #strings.isEmpty(pub.proprietaire)}" th:object="${pub.proprietaire}">
+                <span th:text="*{email}"></span>
+            </td>
+            <td th:unless="${not #strings.isEmpty(pub.proprietaire)}"></td>
+
+            <td>
+                <button th:attr="onclick='deletePublication(\'' + ${pub.id} + '\')'">
+                    <img style="width: 15px; height: 20px;" src="https://static.vecteezy.com/system/resources/previews/021/352/964/original/trash-icon-recycle-and-trash-sign-symbol-icon-free-png.png" alt="Trash">
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

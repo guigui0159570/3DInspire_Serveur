@@ -73,6 +73,10 @@ public class SpringSecurity {
         http.
                 authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/register").permitAll()
+                        .requestMatchers("/test").permitAll()
+                        .requestMatchers("/api/auth/register/save").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/auth/resetPassword").permitAll()
                         .requestMatchers("/api/auth/mail-password").permitAll()
                         .requestMatchers("/register","/api/auth/register/save").permitAll()

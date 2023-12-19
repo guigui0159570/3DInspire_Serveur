@@ -66,7 +66,7 @@ public class AuthControllerRest {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        Utilisateur u = userService.saveUser(userDto);
+        Utilisateur u = userService.saveUser(userDto, false);
         return ResponseEntity.ok(u);
     }
 
