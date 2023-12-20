@@ -219,6 +219,20 @@ public class PublicationControllerREST {
         return avisDTOList;
     }
 
+//    @PostMapping("/telechargement/{id}")
+//    public void telechargementByIDPub(@PathVariable("id") Long id) {
+//        Publication publication = publicationRepository.getPublicationById(id);
+//
+//        if(publication!=null){
+//            int nbTele = publication.getNb_telechargement();
+//            publication.setNb_telechargement(nbTele+1);
+//            publicationRepository.save(publication);
+//        }
+//        else{
+//            System.out.println("la publication téléchargé n'existe pas");
+//        }
+//    }
+
     @GetMapping("/avis/get")
     public Iterable<AvisDTO> getAllAvis() {
         Iterable<Avis> avisList = avisRepository.findAll();
