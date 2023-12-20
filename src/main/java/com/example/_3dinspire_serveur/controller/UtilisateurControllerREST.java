@@ -188,6 +188,7 @@ public class UtilisateurControllerREST {
     @GetMapping("/getUtilisateurIdByEmail")
     public Long getUtilisateurIdByEmail(@RequestParam String email) {
         Utilisateur utilisateur = utilisateurRepository.findByEmail(email);
+        System.out.println(utilisateur.getId());
         return utilisateur.getId();
     }
 

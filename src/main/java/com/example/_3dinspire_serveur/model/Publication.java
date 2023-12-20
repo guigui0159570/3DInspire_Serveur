@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 @Getter @Setter
+@NoArgsConstructor
 @Entity
 public class Publication {
     @Id
@@ -44,7 +47,7 @@ public class Publication {
     @JsonIgnore
     private List<Avis> avis = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REFRESH})
     @JoinTable(
             name = "publication_panier",
             joinColumns = @JoinColumn(name = "publication_id"),
@@ -60,7 +63,7 @@ public class Publication {
     @JoinColumn
     private Utilisateur proprietaire;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
             name = "publication_tag",
             joinColumns = @JoinColumn(name = "publication_id"),
@@ -70,4 +73,17 @@ public class Publication {
 
     private LocalDateTime dateLocal;
 
+    public Publication(String titre, String description, boolean gratuit, boolean publique, float prix, String image, String fichier, int nb_telechargement, Utilisateur proprietaire, LocalDateTime dateLocal) {
+        this.titre = titre;
+        this.description = description;
+        this.gratuit = gratuit;
+        this.publique = publique;
+        this.prix = prix;
+        this.image = image;
+        this.fichier = fichier;
+        this.nb_telechargement = nb_telechargement;
+        this.notification = notification;
+        this.proprietaire = proprietaire;
+        this.dateLocal = dateLocal;
+    }
 }

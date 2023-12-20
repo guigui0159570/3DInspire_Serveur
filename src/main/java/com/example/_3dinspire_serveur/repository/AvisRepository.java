@@ -25,4 +25,6 @@ public interface AvisRepository extends CrudRepository<Avis, Long> {
     Iterable<Avis> getAvisByPublicationId(Publication publication);
     @Query("select avis from Avis avis where avis.utilisateur = :utilisateur")
     Iterable<Avis> getAvisByUtilisateurId(Utilisateur utilisateur);
+
+    void deleteAvisByUtilisateurId(Long id);
 }

@@ -110,6 +110,7 @@ public class PublicationControllerREST {
             @RequestParam("publique") boolean publique,
             @RequestParam("prix") float prix,
             @RequestParam("image") MultipartFile image,
+            @RequestParam("file") MultipartFile file,
             @RequestParam("tags") List<String> tags,
             @RequestParam("email") String email
             ) {
@@ -132,6 +133,7 @@ public class PublicationControllerREST {
         Utilisateur utilisateur = utilisateurOptional.orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé pour l'e-mail " + email));
 
         publication.setImage(isEmpty(image, publication.getId(), utilisateur.getId(), titre, "i"));
+        publication.setFichier(isEmpty(file, publication.getId(), utilisateur.getId(), titre, "f"));
 
         for (String tagNom : tags) {
             String tagNomSansGuillemets = tagNom.replaceAll("\"", "");  // Enlever les guillemets

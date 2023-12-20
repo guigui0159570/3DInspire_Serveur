@@ -1,5 +1,6 @@
 package com.example._3dinspire_serveur.repository;
 
+import com.example._3dinspire_serveur.model.Publication;
 import com.example._3dinspire_serveur.model.Utilisateur;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,4 +19,5 @@ public interface UserRespository extends CrudRepository<Utilisateur, Long> {
     @Modifying
     @Query(value = "UPDATE Utilisateur u set u.password = :password WHERE u.resetToken = :token")
     void UpdatePasswordUtilisateur(@Param("password") String password,@Param("token") String token);
+
 }

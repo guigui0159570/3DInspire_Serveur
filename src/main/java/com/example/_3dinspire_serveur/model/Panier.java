@@ -22,7 +22,7 @@ public class Panier {
     private Utilisateur utilisateur;
 
 
-    @ManyToMany(mappedBy = "paniers")
+    @ManyToMany(mappedBy = "paniers",cascade = {CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REFRESH})
     private Set<Publication> publications = new HashSet<>();
 
 

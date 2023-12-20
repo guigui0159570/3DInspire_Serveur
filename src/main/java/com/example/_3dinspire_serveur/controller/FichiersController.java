@@ -3,6 +3,7 @@ package com.example._3dinspire_serveur.controller;
 import com.example._3dinspire_serveur.model.Publication;
 import com.example._3dinspire_serveur.repository.PublicationRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;

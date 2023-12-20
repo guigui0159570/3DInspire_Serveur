@@ -7,9 +7,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 public interface UtilisateurService {
-    Utilisateur saveUser(UtilisateurDTO userDto);
+    Utilisateur saveUser(UtilisateurDTO userDto, boolean admin);
 
     Utilisateur findUserByEmail(String email);
+
 
     List<UtilisateurDTO> findAllUsers();
 

@@ -180,7 +180,7 @@ public class AuthControllerRest {
             message.setFrom("3dinspire10@gmail.com");
             message.setTo(to);
             message.setSubject("Réinitialisation de mot de passe");
-            String resetLink = "http://172.24.0.1:8080/api/auth/mail-password?token="+resetToken;
+            String resetLink = "http://10.6.2.252:8080/api/auth/mail-password?token="+resetToken;
             message.setText("Cliquez sur le lien suivant pour réinitialiser votre mot de passe: \n" + resetLink);
 
             System.out.println("About to send email...");

@@ -2,13 +2,13 @@ package com.example._3dinspire_serveur.controller;
 import com.example._3dinspire_serveur.model.DTO.UtilisateurDTO;
 import com.example._3dinspire_serveur.model.Avis;
 import com.example._3dinspire_serveur.model.Profil;
-import com.example._3dinspire_serveur.model.Panier;
 import com.example._3dinspire_serveur.model.Publication;
 import com.example._3dinspire_serveur.model.Utilisateur;
 import com.example._3dinspire_serveur.repository.UtilisateurRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ControllerTest {
@@ -26,6 +26,11 @@ public class ControllerTest {
         model.addAttribute("post", new Publication());
         model.addAttribute("avis", new Avis());
         return "form";
+    }
+
+    @GetMapping("/test")
+    public @ResponseBody String greeting() {
+        return "Hello, World";
     }
 
     @GetMapping("/register")
