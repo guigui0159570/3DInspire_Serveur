@@ -10,10 +10,8 @@ public class Profil {
     @GeneratedValue
     private Long id;
 
-    @NotBlank
     private String description;
 
-    @NotBlank
     private String photo;
 
     @OneToOne(mappedBy = "profil")

@@ -28,7 +28,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     }
 
     @Override
-    public Utilisateur saveUser(UtilisateurDTO userDto) {
+    public Utilisateur saveUser(UtilisateurDTO userDto, boolean admin) {
         Utilisateur user = new Utilisateur();
         user.setPseudo(userDto.getPseudo());
         user.setEmail(userDto.getEmail());
@@ -38,9 +38,17 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         if(role == null){
             role = checkRoleUserExist();
         }
+        if (admin){
+            role = roleRepository.findByName("ROLE_ADMIN");
+            if(role == null){
+                role = checkRoleUserExist();
+            }
+        }
         user.setRoles(Arrays.asList(role));
         return userRepository.save(user);
     }
+
+
 
     public Utilisateur setAdmin(Utilisateur utilisateur){
         Role role = roleRepository.findByName("ROLE_ADMIN");
@@ -63,6 +71,12 @@ public class UtilisateurServiceImpl implements UtilisateurService {
                 .map(user -> mapToUserDto(user))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Utilisateur findByResetToken(String resetToken) {
+        return userRepository.findByResetToken(resetToken);
+    }
+
 
     private UtilisateurDTO mapToUserDto(Utilisateur user){
         UtilisateurDTO userDto = new UtilisateurDTO();

@@ -1,6 +1,9 @@
 package com.example._3dinspire_serveur.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -32,28 +35,48 @@ public class Utilisateur {
     private String pseudo;
     @NotBlank
     private String password;
+    private String resetToken;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
-            name = "abonnements",
-            joinColumns = @JoinColumn(name = "utilisateur_id"),
+            name = "Abonnements",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "abonnement_id")
+    )
+    @JsonIgnore
+    private Set<Utilisateur> Abonnements;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinTable(
+            name = "Abonnes",
+            joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "abonne_id")
     )
     @JsonIgnore
-    private Set<Utilisateur> abonnements = new HashSet<>();
-    @ManyToMany(mappedBy = "abonnements")
-    @JsonIgnore
-    private Set<Utilisateur> abonnes = new HashSet<>();
+    private Set<Utilisateur> Abonnes;
+
+    @ManyToMany
+    @JoinTable(
+            name = "UtilisateurNotifie",
+            joinColumns = @JoinColumn(name = "utilisateur_id"),
+            inverseJoinColumns = @JoinColumn(name = "utilisateur_notifie_id")
+    )
+    private Set<Utilisateur> utilisateursNotifies;
 
     @OneToOne
     @JoinColumn(name="profil_id")
+    @JsonIgnore
     private Profil profil;
 
     @OneToMany(mappedBy = "proprietaire")
     @JsonIgnore
     private Set<Publication> publications;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "utilisateur")
+    @JsonIgnore
+    private Set<Notification> notifications;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
             name="users_roles",
             joinColumns={@JoinColumn(name="USER_ID", referencedColumnName="ID")},
@@ -61,11 +84,48 @@ public class Utilisateur {
     @JsonIgnore
     private List<Role> roles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)    @JsonIgnore
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Avis> avis;
 
-    @OneToOne @JoinColumn(name = "panier_user")
-    private Panier panier;
+    @OneToMany(mappedBy = "utilisateur")
+    @JsonIgnore
+    private Set<Panier> paniers;
+
+    public Set<Utilisateur> getUtilisateursNotifies() {
+        return utilisateursNotifies;
+    }
+
+    public void setUtilisateursNotifies(Set<Utilisateur> utilisateursNotifies) {
+        this.utilisateursNotifies = utilisateursNotifies;
+    }
+
+    public Set<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(Set<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
+    public void ajouterNotification(Notification notif){
+        this.notifications.add(notif);
+    }
+
+    public void deleteAbonne(Utilisateur user){
+        getAbonnes().remove(user);
+    }
+
+    public boolean verifAbonnement(Utilisateur user){
+        return this.getAbonnements().contains(user);
+    }
+
+    public boolean verifUserNotifies(Utilisateur user){
+        return this.getUtilisateursNotifies().contains(user);
+    }
+    public void deleteAbonnement(Utilisateur user){
+        getAbonnements().remove(user);
+    }
 
     public Set<Avis> getAvis() {
         return avis;
@@ -73,6 +133,18 @@ public class Utilisateur {
 
     public void setAvis(Set<Avis> avis) {
         this.avis = avis;
+    }
+
+    public void ajouterUserNotifie(Utilisateur user){
+        this.utilisateursNotifies.add(user);
+    }
+
+    public void ajouterAbonnement(Utilisateur user){
+        this.Abonnements.add(user);
+    }
+
+    public void ajouterAbonne(Utilisateur user){
+        this.Abonnes.add(user);
     }
 
     public Set<Publication> getPublications() {
@@ -85,55 +157,33 @@ public class Utilisateur {
         this.password = password;
     }
 
+    public void setPublications(Set<Publication> publications) {
+        this.publications = publications;
+    }
+
+    public Profil getProfil() {
+        return profil;
+    }
+
+    public void setProfil(Profil profil) {
+        this.profil = profil;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }
 
-    public Set<Utilisateur> getAbonnements() {
-        return abonnements;
+    public Integer  countAbonnement(){
+        return getAbonnements().size();
     }
 
-    public void setAbonnements(Set<Utilisateur> abonnements) {
-        this.abonnements = abonnements;
+    public Integer countAbonne(){
+        return getAbonnes().size();
     }
 
-    public Set<Utilisateur> getAbonnes() {
-        return abonnes;
-    }
 
-    public void setAbonnes(Set<Utilisateur> abonnes) {
-        this.abonnes = abonnes;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPseudo() {
-        return pseudo;
-    }
-
-    public void setPseudo(String pseudo) {
-        this.pseudo = pseudo;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Panier getPanier() {
-        return panier;
-    }
-
-    public void setPanier(Panier panier) {
-        this.panier = panier;
-    }
 }

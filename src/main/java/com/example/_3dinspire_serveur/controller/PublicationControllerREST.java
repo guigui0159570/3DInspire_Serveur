@@ -78,6 +78,29 @@ public class PublicationControllerREST {
 
         return responseEntity;
     }
+    @GetMapping("/getByFiltre")
+    public ResponseEntity<Iterable<Publication>> getByFiltre(@RequestParam("filtre")String filtre){
+        System.out.println(filtre);
+        Iterable<Publication> publications = publicationRepository.getFiltre(filtre);
+        ResponseEntity<Iterable<Publication>> responseEntity = ResponseEntity.ok().body(publications);
+        responseEntity.getHeaders().forEach((headerName, headerValues) ->
+                System.out.println(headerName + ": " + headerValues));
+
+        return responseEntity;
+    }
+
+    @GetMapping("/get/uti/{id}/getFiltreByUser")
+    public ResponseEntity<Iterable<Publication>> getFiltreByUser(@PathVariable("id") Long id,@RequestParam("filtre")String filtre){
+        if (utilisateurRepository.findById(id).isPresent()) {
+            Iterable<Publication> publications = publicationRepository.getFiltreByUser(filtre,id);
+            ResponseEntity<Iterable<Publication>> responseEntity = ResponseEntity.ok().body(publications);
+            responseEntity.getHeaders().forEach((headerName, headerValues) ->
+                    System.out.println(headerName + ": " + headerValues));
+            return responseEntity;
+        }
+        else return null;
+
+    }
 
 
     @PostMapping("/save")
@@ -88,6 +111,7 @@ public class PublicationControllerREST {
             @RequestParam("publique") boolean publique,
             @RequestParam("prix") float prix,
             @RequestParam("image") MultipartFile image,
+            @RequestParam("file") MultipartFile file,
             @RequestParam("tags") List<String> tags,
             @RequestParam("email") String email
             ) {
@@ -110,6 +134,7 @@ public class PublicationControllerREST {
         Utilisateur utilisateur = utilisateurOptional.orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé pour l'e-mail " + email));
 
         publication.setImage(isEmpty(image, publication.getId(), utilisateur.getId(), titre, "i"));
+        publication.setFichier(isEmpty(file, publication.getId(), utilisateur.getId(), titre, "f"));
 
         for (String tagNom : tags) {
             String tagNomSansGuillemets = tagNom.replaceAll("\"", "");  // Enlever les guillemets
@@ -129,6 +154,8 @@ public class PublicationControllerREST {
         utilisateurOptional.ifPresent(publication::setProprietaire);
         return publicationRepository.save(publication);
     }
+
+
 
     public String isEmpty(MultipartFile object, long publication_id, long proprietaire_id, String titre, String type){
         if (object.isEmpty()) {
@@ -194,6 +221,20 @@ public class PublicationControllerREST {
         return avisDTOList;
     }
 
+//    @PostMapping("/telechargement/{id}")
+//    public void telechargementByIDPub(@PathVariable("id") Long id) {
+//        Publication publication = publicationRepository.getPublicationById(id);
+//
+//        if(publication!=null){
+//            int nbTele = publication.getNb_telechargement();
+//            publication.setNb_telechargement(nbTele+1);
+//            publicationRepository.save(publication);
+//        }
+//        else{
+//            System.out.println("la publication téléchargé n'existe pas");
+//        }
+//    }
+
     @GetMapping("/avis/get")
     public Iterable<AvisDTO> getAllAvis() {
         Iterable<Avis> avisList = avisRepository.findAll();
@@ -250,5 +291,6 @@ public class PublicationControllerREST {
 
         return avisRepository.save(avis);
     }
+
 
 }
