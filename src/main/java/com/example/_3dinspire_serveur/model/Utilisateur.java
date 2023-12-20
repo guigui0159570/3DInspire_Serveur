@@ -55,6 +55,14 @@ public class Utilisateur {
     @JsonIgnore
     private Set<Utilisateur> Abonnes;
 
+    @ManyToMany
+    @JoinTable(
+            name = "UtilisateurNotifie",
+            joinColumns = @JoinColumn(name = "utilisateur_id"),
+            inverseJoinColumns = @JoinColumn(name = "utilisateur_notifie_id")
+    )
+    private Set<Utilisateur> utilisateursNotifies;
+
     @OneToOne
     @JoinColumn(name="profil_id")
     @JsonIgnore
@@ -63,6 +71,10 @@ public class Utilisateur {
     @OneToMany(mappedBy = "proprietaire")
     @JsonIgnore
     private Set<Publication> publications;
+
+    @OneToMany(mappedBy = "utilisateur")
+    @JsonIgnore
+    private Set<Notification> notifications;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
@@ -75,14 +87,30 @@ public class Utilisateur {
     @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Avis> avis;
+
     @OneToMany(mappedBy = "utilisateur")
     @JsonIgnore
     private Set<Panier> paniers;
 
+    public Set<Utilisateur> getUtilisateursNotifies() {
+        return utilisateursNotifies;
+    }
 
+    public void setUtilisateursNotifies(Set<Utilisateur> utilisateursNotifies) {
+        this.utilisateursNotifies = utilisateursNotifies;
+    }
 
+    public Set<Notification> getNotifications() {
+        return notifications;
+    }
 
+    public void setNotifications(Set<Notification> notifications) {
+        this.notifications = notifications;
+    }
 
+    public void ajouterNotification(Notification notif){
+        this.notifications.add(notif);
+    }
 
     public void deleteAbonne(Utilisateur user){
         getAbonnes().remove(user);
@@ -90,6 +118,10 @@ public class Utilisateur {
 
     public boolean verifAbonnement(Utilisateur user){
         return this.getAbonnements().contains(user);
+    }
+
+    public boolean verifUserNotifies(Utilisateur user){
+        return this.getUtilisateursNotifies().contains(user);
     }
     public void deleteAbonnement(Utilisateur user){
         getAbonnements().remove(user);
@@ -101,6 +133,10 @@ public class Utilisateur {
 
     public void setAvis(Set<Avis> avis) {
         this.avis = avis;
+    }
+
+    public void ajouterUserNotifie(Utilisateur user){
+        this.utilisateursNotifies.add(user);
     }
 
     public void ajouterAbonnement(Utilisateur user){
@@ -148,5 +184,6 @@ public class Utilisateur {
     public Integer countAbonne(){
         return getAbonnes().size();
     }
+
 
 }
