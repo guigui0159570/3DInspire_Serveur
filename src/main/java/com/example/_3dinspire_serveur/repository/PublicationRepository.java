@@ -19,6 +19,6 @@ public interface PublicationRepository extends CrudRepository<Publication, Long>
     Iterable<Publication> getPublicationByStatut(Boolean gratuit, Long proprio);
 
 
-    @Query("select publication from Publication publication order by publication.dateLocal desc ")
+    @Query("select publication from Publication publication where publication.publique = true order by publication.dateLocal desc ")
     Iterable<Publication> getPublicationByTime();
 }

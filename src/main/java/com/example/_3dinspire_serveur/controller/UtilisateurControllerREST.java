@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.Iterator;
+import java.util.Optional;
 
 @RestController
 public class UtilisateurControllerREST {
@@ -49,5 +49,16 @@ public class UtilisateurControllerREST {
     public Long getUtilisateurIdByEmail(@RequestParam String email) {
         Utilisateur utilisateur = utilisateurRepository.findByEmail(email);
         return utilisateur.getId();
+    }
+
+    @GetMapping("/getUtilisateur/{id}")
+    public Utilisateur getUtilisateurById(@PathVariable("id") Long id){
+        if(utilisateurRepository.findById(id).isPresent()){
+            Utilisateur user = new Utilisateur();
+            user.setId(utilisateurRepository.findById(id).get().getId());
+            user.setPseudo(utilisateurRepository.findById(id).get().getPseudo());
+            return user;
+        }
+        return new Utilisateur();
     }
 }

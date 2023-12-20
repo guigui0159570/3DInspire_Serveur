@@ -29,5 +29,4 @@ public class ControllerTest {
     public String login(){
         return "loginForm";
     }
-
 }

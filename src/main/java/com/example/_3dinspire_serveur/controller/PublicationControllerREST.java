@@ -79,6 +79,7 @@ public class PublicationControllerREST {
         return responseEntity;
     }
 
+
     @PostMapping("/save")
     public Publication savePublication(
             @RequestParam("titre") String titre,
@@ -166,6 +167,7 @@ public class PublicationControllerREST {
         List<AvisDTO> avisDTOList = new ArrayList<>();
 
         for (Avis avis : avisList) {
+            System.out.println(avis.getUtilisateur().getId());
             avisDTOList.add(new AvisDTO(avis.getId(),
                     avis.getCommentaire(),
                     avis.getEtoile(),
