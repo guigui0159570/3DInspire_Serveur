@@ -1,5 +1,6 @@
 package com.example._3dinspire_serveur.controller;
 
+import com.example._3dinspire_serveur.model.Notification;
 import com.example._3dinspire_serveur.model.Profil;
 import com.example._3dinspire_serveur.model.Utilisateur;
 import com.example._3dinspire_serveur.repository.*;
@@ -22,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.Optional;
 
@@ -33,12 +35,14 @@ public class UtilisateurControllerREST {
     private final UtilisateurRepository utilisateurRepository;
     private final ProfilRepository profilRepository;
     private final PublicationRepository publicationRepository;
+    private final NotificationRepository notificationRepository;
     private final AvisRepository avisRepository;
 
-    public UtilisateurControllerREST(UtilisateurRepository utilisateurRepository, ProfilRepository profilRepository, PublicationRepository publicationRepository, AvisRepository avisRepository) {
+    public UtilisateurControllerREST(UtilisateurRepository utilisateurRepository, ProfilRepository profilRepository, PublicationRepository publicationRepository, NotificationRepository notificationRepository, AvisRepository avisRepository) {
         this.utilisateurRepository = utilisateurRepository;
         this.profilRepository = profilRepository;
         this.publicationRepository = publicationRepository;
+        this.notificationRepository = notificationRepository;
         this.avisRepository = avisRepository;
     }
 
@@ -56,8 +60,14 @@ public class UtilisateurControllerREST {
         Optional<Utilisateur> utilisateur = utilisateurRepository.findById(user);
         if (utilisateur_abonne.isPresent() && utilisateur.isPresent()){
             if(!id.equals(user)) {
+                Notification notification = new Notification(null, LocalDate.now(),null);
                 utilisateur.get().ajouterAbonnement(utilisateur_abonne.get());
                 utilisateur_abonne.get().ajouterAbonne(utilisateur.get());
+                System.out.println(notification.getId());
+                utilisateur_abonne.get().ajouterNotification(notification);
+                notification.setUtilisateur(utilisateur_abonne.get());
+
+                notificationRepository.save(notification);
                 utilisateurRepository.save(utilisateur.get());
                 utilisateurRepository.save(utilisateur_abonne.get());
             }
@@ -93,16 +103,16 @@ public class UtilisateurControllerREST {
             information.put("pseudo", String.valueOf(userObj.getPseudo()));
 
             Profil profil = userObj.getProfil();
-            if (profil != null) {
+//            if (profil != null) {
+            if (profil.getDescription() != null) {
                 String encodedDescription = URLEncoder.encode(profil.getDescription(), StandardCharsets.UTF_8);
                 information.put("description", encodedDescription);
-                if (profil.getPhoto() != null) {
-                    information.put("photo", profil.getPhoto());
-                } else {
-                    information.put("photo", null);
-                }
-            } else {
+            }else {
                 information.put("description", null);
+            }
+            if (profil.getPhoto() != null) {
+                information.put("photo", profil.getPhoto());
+            } else {
                 information.put("photo", null);
             }
         }
@@ -131,11 +141,10 @@ public class UtilisateurControllerREST {
     // fonction pour avoir une liste de tout les abonnes d'un utilisateur
 
     @GetMapping("/abonneUser/{userId}")
-    public Set<Map> AbonneUser(@PathVariable Long userId) throws UnsupportedEncodingException {
-        Set<Map> abonneinfo = new HashSet<>();
+    public Set<Map<String,String>> AbonneUser(@PathVariable Long userId) throws UnsupportedEncodingException {
+        Set<Map<String,String>> abonneinfo = new HashSet<>();
         Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findById(userId);
         if (utilisateurOptional.isPresent()) {
-            System.out.println("gg");
 
             Utilisateur utilisateur = utilisateurOptional.get();
             for (Utilisateur utilisateur1 : utilisateur.getAbonnes()) {
@@ -159,6 +168,18 @@ public class UtilisateurControllerREST {
 
         if (utilisateur.isPresent() && abonneUser.isPresent()) {
             return utilisateur.get().verifAbonnement(abonneUser.get());
+        } else {
+            return false;
+        }
+    }
+
+    @GetMapping("/presenceUserNotifie/{userId}/{abonnement}")
+    public boolean presenceUserNotifie(@PathVariable Long userId, @PathVariable Long abonnementid) {
+        Optional<Utilisateur> utilisateur = utilisateurRepository.findById(userId);
+        Optional<Utilisateur> abonnementUser = utilisateurRepository.findById(abonnementid);
+
+        if (utilisateur.isPresent() && abonnementUser.isPresent()) {
+            return utilisateur.get().verifUserNotifies(abonnementUser.get());
         } else {
             return false;
         }
@@ -223,17 +244,17 @@ public class UtilisateurControllerREST {
         if (utilisateur.isPresent()){
             utilisateur.get().setPseudo(requestBody.get("pseudo").replaceAll("^\"|\"$", ""));
             utilisateurRepository.save(utilisateur.get());
-            if (utilisateur.get().getProfil() != null) {
                 Optional<Profil> profil = profilRepository.findById(utilisateur.get().getProfil().getId());
                 if (profil.isPresent()){
-                    profil.get().setDescription(requestBody.get("description").replaceAll("^\"|\"$", ""));
+                    System.out.println("666666666"+requestBody.get("description"));
+                    if (requestBody.get("description").length() > 0) {
+                        System.out.println(requestBody.get("description").length());
+                        profil.get().setDescription(requestBody.get("description").replaceAll("^\"|\"$", ""));
+                    }else {
+                        profil.get().setDescription(null);
+                    }
                     profilRepository.save(profil.get());
                 }
-            }else {
-                Profil profil = new Profil(requestBody.get("description"), null,null);
-                utilisateur.get().setProfil(profil);
-                profilRepository.save(profil);
-            }
         }
         return ResponseEntity.ok("OK");
     }
@@ -265,29 +286,49 @@ public class UtilisateurControllerREST {
         Optional<Utilisateur> utilisateur = utilisateurRepository.findById(user);
         try {
             if (utilisateur.isPresent()) {
-                if (utilisateur.get().getProfil().getPhoto() != null) {
-                    Path filePath = Paths.get(uploadDirImageProfil).resolve(utilisateur.get().getProfil().getPhoto()).normalize();
+//                if (utilisateur.get().getProfil() != null) {
 
-                    // Vérifier si le fichier existe avant de le supprimer
-                    if (Files.exists(filePath)) {
-                        Files.delete(filePath);
-                        System.out.println("supprime");
-                    } else {
-                        System.out.println("erreur");
+                    if (utilisateur.get().getProfil().getPhoto() != null) {
+                        Path filePath = Paths.get(uploadDirImageProfil).resolve(utilisateur.get().getProfil().getPhoto()).normalize();
+
+                        // Vérifier si le fichier existe avant de le supprimer
+                        if (Files.exists(filePath)) {
+                            Files.delete(filePath);
+                            System.out.println("supprime");
+                        } else {
+                            System.out.println("erreur");
+                        }
                     }
-                }
-                // Construire le chemin complet pour le nouveau fichier
-                Path targetLocation = Path.of(uploadDirImageProfil).resolve(file.getOriginalFilename());
+                    // Construire le chemin complet pour le nouveau fichier
+                    Path targetLocation = Path.of(uploadDirImageProfil).resolve(file.getOriginalFilename());
 
-                utilisateur.get().getProfil().setPhoto(file.getOriginalFilename());
-                utilisateurRepository.save(utilisateur.get());
-                // Copier le fichier dans le répertoire de destination
-                Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+                    utilisateur.get().getProfil().setPhoto(file.getOriginalFilename());
+                    utilisateurRepository.save(utilisateur.get());
+                    // Copier le fichier dans le répertoire de destination
+                    Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-                System.out.println("Fichier enregistré avec succès à : " + targetLocation);
+                    System.out.println("Fichier enregistré avec succès à : " + targetLocation);
 
-                return ResponseEntity.ok("Fichier téléchargé avec succès!");
+                    return ResponseEntity.ok("Fichier téléchargé avec succès!");
+//                } else {
+//                    // Construire le chemin complet pour le nouveau fichier
+//                    Path targetLocation = Path.of(uploadDirImageProfil).resolve(file.getOriginalFilename());
+//
+//                    utilisateur.get().getProfil().setPhoto(file.getOriginalFilename());
+//                    utilisateurRepository.save(utilisateur.get());
+//                    // Copier le fichier dans le répertoire de destination
+//                    Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+//
+//                    System.out.println("Fichier enregistré avec succès à : " + targetLocation);
+//                    Profil profil = new Profil(null, file.getOriginalFilename(), null);
+//                    utilisateur.get().setProfil(profil);
+//                    profilRepository.save(profil);
+//                    utilisateurRepository.save(utilisateur.get());
+//                    return ResponseEntity.ok("Fichier téléchargé avec succès!");
+//                }
+
             }
+
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Erreur lors de la suppression du fichier.");

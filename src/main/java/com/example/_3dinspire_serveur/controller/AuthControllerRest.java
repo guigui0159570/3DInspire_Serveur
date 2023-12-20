@@ -1,6 +1,8 @@
 package com.example._3dinspire_serveur.controller;
 
 import com.example._3dinspire_serveur.model.DTO.UtilisateurDTO;
+import com.example._3dinspire_serveur.model.Profil;
+import com.example._3dinspire_serveur.repository.ProfilRepository;
 import com.example._3dinspire_serveur.repository.UserRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -35,6 +37,7 @@ public class AuthControllerRest {
     private JwtUtil jwtUtil;
     private UserRespository userRespository;
     private UtilisateurRepository utilisateurRepository;
+    private ProfilRepository profilRepository;
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -43,12 +46,13 @@ public class AuthControllerRest {
         this.env = env;
 
     }
-    public AuthControllerRest(UtilisateurService utilisateurService, AuthenticationManager authenticationManager, JwtUtil jwtUtil, UtilisateurRepository utilisateurRepository, UserRespository UserRepository) {
+    public AuthControllerRest(UtilisateurService utilisateurService, AuthenticationManager authenticationManager, JwtUtil jwtUtil, UtilisateurRepository utilisateurRepository, UserRespository UserRepository, ProfilRepository profilRepository) {
         this.userService = utilisateurService;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.utilisateurRepository = utilisateurRepository;
         this.userRespository = UserRepository;
+        this.profilRepository = profilRepository;
     }
     @PostMapping("/register/save")
     public ResponseEntity<Utilisateur> registration(@Valid @ModelAttribute("user") UtilisateurDTO userDto,
@@ -67,6 +71,10 @@ public class AuthControllerRest {
         }
 
         Utilisateur u = userService.saveUser(userDto);
+        Profil profil = new Profil(null,null, null);
+        u.setProfil(profil);
+        profilRepository.save(profil);
+        userRespository.save(u);
         return ResponseEntity.ok(u);
     }
 
@@ -172,7 +180,7 @@ public class AuthControllerRest {
             message.setFrom("3dinspire10@gmail.com");
             message.setTo(to);
             message.setSubject("Réinitialisation de mot de passe");
-            String resetLink = "http://10.6.2.252:8080/api/auth/mail-password?token="+resetToken;
+            String resetLink = "http://172.24.0.1:8080/api/auth/mail-password?token="+resetToken;
             message.setText("Cliquez sur le lien suivant pour réinitialiser votre mot de passe: \n" + resetLink);
 
             System.out.println("About to send email...");

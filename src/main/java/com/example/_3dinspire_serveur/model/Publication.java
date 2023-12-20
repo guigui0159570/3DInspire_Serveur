@@ -53,8 +53,8 @@ public class Publication {
     @JsonIgnore
     private Set<Panier> paniers = new HashSet<>();
 
-    @OneToOne(mappedBy = "publication_notif")
-    private Notification notification;
+//    @OneToOne(mappedBy = "publication_notif")
+//    private Notification notification;
 
     @ManyToOne
     @JoinColumn
