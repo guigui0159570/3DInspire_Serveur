@@ -82,7 +82,6 @@ public class Publication {
         this.image = image;
         this.fichier = fichier;
         this.nb_telechargement = nb_telechargement;
-        this.notification = notification;
         this.proprietaire = proprietaire;
         this.dateLocal = dateLocal;
     }
