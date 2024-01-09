@@ -93,7 +93,14 @@ public class Utilisateur {
     @JsonIgnore
     private Set<Panier> paniers;
 
-
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(
+            name = "utilisateur_achat",
+            joinColumns = @JoinColumn(name = "utilisateur_id"),
+            inverseJoinColumns = @JoinColumn(name = "publication_id")
+    )
+    @JsonIgnore
+    private Set<Publication> publicationsAchats;
     public Set<Utilisateur> getUtilisateursNotifies() {
         return utilisateursNotifies;
     }
