@@ -70,7 +70,7 @@ public class AuthControllerRest {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        Utilisateur u = userService.saveUser(userDto);
+        Utilisateur u = userService.saveUser(userDto, false);
         Profil profil = new Profil(null,null, null);
         u.setProfil(profil);
         profilRepository.save(profil);

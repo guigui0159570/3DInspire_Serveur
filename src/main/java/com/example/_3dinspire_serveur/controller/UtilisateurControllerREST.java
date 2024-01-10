@@ -210,19 +210,20 @@ public class UtilisateurControllerREST {
             user.setPseudo(utilisateurRepository.findById(id).get().getPseudo());
             return user;
         }
-        return new Utilisateur();=======
-    @Transactional
-    @DeleteMapping("/utilisateur/delete/{id}")
-    public void deleteUtilisateur( @PathVariable("id") Long id) {
-        try {
-            avisRepository.deleteAvisByUtilisateurId(id);
-            publicationRepository.deletePublicationByProprietaire(id);
-            profilRepository.deleteProfilByUtilisateurId(id);
-            utilisateurRepository.deleteById(id);
-            System.out.println("Utilisateur supprimé avec succès.");
-        } catch (Exception e) {
-            System.out.println("Erreur lors de la suppression de l'utilisateur.");
-        }
+        return new Utilisateur();
+    }
+        @Transactional
+        @DeleteMapping("/utilisateur/delete/{id}")
+        public void deleteUtilisateur( @PathVariable("id") Long id) {
+            try {
+                avisRepository.deleteAvisByUtilisateurId(id);
+                publicationRepository.deletePublicationByProprietaire(id);
+                profilRepository.deleteProfilByUtilisateurId(id);
+                utilisateurRepository.deleteById(id);
+                System.out.println("Utilisateur supprimé avec succès.");
+            } catch (Exception e) {
+                System.out.println("Erreur lors de la suppression de l'utilisateur.");
+            }
     }
 
 
