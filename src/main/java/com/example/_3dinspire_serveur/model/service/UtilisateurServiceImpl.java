@@ -5,6 +5,7 @@ import com.example._3dinspire_serveur.model.Role;
 import com.example._3dinspire_serveur.model.Utilisateur;
 import com.example._3dinspire_serveur.repository.RoleRepository;
 import com.example._3dinspire_serveur.repository.UtilisateurRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +28,9 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     @Override
-    public Utilisateur saveUser(UtilisateurDTO userDto, boolean admin) {
+    public Utilisateur saveUser(UtilisateurDTO userDto) {
         Utilisateur user = new Utilisateur();
         user.setPseudo(userDto.getPseudo());
         user.setEmail(userDto.getEmail());
@@ -37,12 +39,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         Role role = roleRepository.findByName("ROLE_USER");
         if(role == null){
             role = checkRoleUserExist();
-        }
-        if (admin){
-            role = roleRepository.findByName("ROLE_ADMIN");
-            if(role == null){
-                role = checkRoleUserExist();
-            }
         }
         user.setRoles(Arrays.asList(role));
         return userRepository.save(user);

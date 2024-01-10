@@ -4,6 +4,7 @@ import com.example._3dinspire_serveur.model.DTO.UtilisateurDTO;
 import com.example._3dinspire_serveur.model.Profil;
 import com.example._3dinspire_serveur.repository.ProfilRepository;
 import com.example._3dinspire_serveur.repository.UserRespository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;import com.example._3dinspire_serveur.model.Utilisateur;
@@ -54,21 +55,21 @@ public class AuthControllerRest {
         this.userRespository = UserRepository;
         this.profilRepository = profilRepository;
     }
+    @Transactional
     @PostMapping("/register/save")
     public ResponseEntity<Utilisateur> registration(@Valid @ModelAttribute("user") UtilisateurDTO userDto,
                                        BindingResult result,
-                                       Model model){
-        System.out.println(userDto.getEmail()+userDto.getPassword()+userDto.getPseudo());
+                                       Model model) {
         Utilisateur existingUser = userService.findUserByEmail(userDto.getEmail());
-        if(existingUser != null && existingUser.getEmail() != null && !existingUser.getEmail().isEmpty()){
+        if (existingUser != null && existingUser.getEmail() != null && !existingUser.getEmail().isEmpty()) {
             result.rejectValue("email", null,
                     "Un compte existe déjà sous cette adresse email.");
         }
 
-        if(result.hasErrors()){
-            // model.addAttribute("user", userDto);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        if (result.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
+
 
         Utilisateur u = userService.saveUser(userDto, false);
         Profil profil = new Profil(null,null, null);
@@ -76,9 +77,22 @@ public class AuthControllerRest {
         profilRepository.save(profil);
         userRespository.save(u);
         return ResponseEntity.ok(u);
+
+        try {
+            Utilisateur u = userService.saveUser(userDto);
+            Profil profil = new Profil(null, null);
+            profil = profilRepository.save(profil);
+            u.setProfil(profil);
+            System.out.println(u);
+            return ResponseEntity.ok(u);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
     }
 
-    @GetMapping("/login/verif")
+        @GetMapping("/login/verif")
     public ResponseEntity<Utilisateur> login(@Valid @ModelAttribute("user") UtilisateurDTO userDto,
                                              BindingResult result,
                                              Model model){

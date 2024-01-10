@@ -56,6 +56,10 @@ public class Publication {
     @JsonIgnore
     private Set<Panier> paniers = new HashSet<>();
 
+    @ManyToMany(mappedBy = "publicationsAchats", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JsonIgnore
+    private Set<Utilisateur> utilisateursAcheteurs;
+
 //    @OneToOne(mappedBy = "publication_notif")
 //    private Notification notification;
 

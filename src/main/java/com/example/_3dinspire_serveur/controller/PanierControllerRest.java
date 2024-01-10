@@ -172,14 +172,23 @@ public class PanierControllerRest {
             @RequestParam("email") String email
     ) {
         Utilisateur utilisateur = utilisateurRepository.findUserByEmail(email);
-
         if (utilisateur == null) {
-            System.out.println("utilisateur non trouvé");
+            System.out.println("Utilisateur non trouvé");
+        } else {
+            Panier panier = panierRepository.findPanierByUtilisateurAndEtatIsFalse(utilisateur);
+            if (panier == null) {
+                System.out.println("Panier non trouvé");
+            } else {
+                Set<Publication> publications = panier.getPublications();
+                Set<Publication> achatPub = utilisateur.getPublicationsAchats();
+                achatPub.addAll(publications);
+                panier.setEtat(true);
+                userRespository.save(utilisateur);
+                panierRepository.save(panier);
+            }
         }
-        Panier panier = panierRepository.findPanierByUtilisateurAndEtatIsFalse(utilisateur);
-        panier.setEtat(true);
-        panierRepository.save(panier);
     }
+
 
 
 }

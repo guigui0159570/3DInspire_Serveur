@@ -17,10 +17,9 @@ public class Profil {
     @OneToOne(mappedBy = "profil")
     private Utilisateur utilisateur;
 
-    public Profil(String description, String photo, Utilisateur utilisateur) {
+    public Profil(String description, String photo) {
         this.description = description;
         this.photo = photo;
-        this.utilisateur = utilisateur;
     }
 
     public Profil() {

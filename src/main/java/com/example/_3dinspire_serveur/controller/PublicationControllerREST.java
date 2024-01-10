@@ -10,6 +10,7 @@ import com.example._3dinspire_serveur.repository.PublicationRepository;
 import com.example._3dinspire_serveur.repository.TagRespository;
 import com.example._3dinspire_serveur.repository.UtilisateurRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -87,6 +88,19 @@ public class PublicationControllerREST {
                 System.out.println(headerName + ": " + headerValues));
 
         return responseEntity;
+    }
+
+    @GetMapping("/getPubAchete/{id}")
+    public ResponseEntity<Set<Publication>> getPubAcheteById(@PathVariable("id") Long id){
+        Optional<Utilisateur> utilisateurOp = utilisateurRepository.findById(id);
+        if (utilisateurOp.isPresent()) {
+            Utilisateur utilisateur = utilisateurOp.get();
+            Set<Publication> publications = utilisateur.getPublicationsAchats();
+            return new ResponseEntity<>(publications, HttpStatus.OK);
+
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/get/uti/{id}/getFiltreByUser")
