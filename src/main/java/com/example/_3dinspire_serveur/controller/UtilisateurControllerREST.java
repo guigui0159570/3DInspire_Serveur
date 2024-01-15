@@ -7,6 +7,14 @@ import com.example._3dinspire_serveur.repository.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.aspectj.weaver.ast.Not;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import java.util.Iterator;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -26,6 +34,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.*;
+
 import java.util.Optional;
 
 @RestController
@@ -261,18 +270,30 @@ public class UtilisateurControllerREST {
         return utilisateur.getId();
     }
 
-    @Transactional
-    @DeleteMapping("/utilisateur/delete/{id}")
-    public void deleteUtilisateur( @PathVariable("id") Long id) {
-        try {
-            avisRepository.deleteAvisByUtilisateurId(id);
-            publicationRepository.deletePublicationByProprietaire(id);
-            profilRepository.deleteProfilByUtilisateurId(id);
-            utilisateurRepository.deleteById(id);
-            System.out.println("Utilisateur supprimé avec succès.");
-        } catch (Exception e) {
-            System.out.println("Erreur lors de la suppression de l'utilisateur.");
+
+    @GetMapping("/getUtilisateur/{id}")
+    public Utilisateur getUtilisateurById(@PathVariable("id") Long id) {
+        if (utilisateurRepository.findById(id).isPresent()) {
+            Utilisateur user = new Utilisateur();
+            user.setId(utilisateurRepository.findById(id).get().getId());
+            user.setPseudo(utilisateurRepository.findById(id).get().getPseudo());
+            return user;
         }
+        return new Utilisateur();
+    }
+
+        @Transactional
+        @DeleteMapping("/utilisateur/delete/{id}")
+        public void deleteUtilisateur( @PathVariable("id") Long id) {
+            try {
+                avisRepository.deleteAvisByUtilisateurId(id);
+                publicationRepository.deletePublicationByProprietaire(id);
+                profilRepository.deleteProfilByUtilisateurId(id);
+                utilisateurRepository.deleteById(id);
+                System.out.println("Utilisateur supprimé avec succès.");
+            } catch (Exception e) {
+                System.out.println("Erreur lors de la suppression de l'utilisateur.");
+            }
     }
 
 
@@ -376,6 +397,7 @@ public class UtilisateurControllerREST {
             return ResponseEntity.status(500).body("Erreur lors de la suppression du fichier.");
         }
         return null;
+
     }
 }
 

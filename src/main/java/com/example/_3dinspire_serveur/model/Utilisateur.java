@@ -33,6 +33,7 @@ public class Utilisateur {
     private String email;
     @NotBlank
     private String pseudo;
+    @JsonIgnore
     @NotBlank
     private String password;
     private String resetToken;
@@ -55,7 +56,7 @@ public class Utilisateur {
     @JsonIgnore
     private Set<Utilisateur> Abonnes;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
             name = "UtilisateurNotifie",
             joinColumns = @JoinColumn(name = "utilisateur_id"),
@@ -93,6 +94,14 @@ public class Utilisateur {
     @JsonIgnore
     private Set<Panier> paniers;
 
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(
+            name = "utilisateur_achat",
+            joinColumns = @JoinColumn(name = "utilisateur_id"),
+            inverseJoinColumns = @JoinColumn(name = "publication_id")
+    )
+    @JsonIgnore
+    private Set<Publication> publicationsAchats;
     public Set<Utilisateur> getUtilisateursNotifies() {
         return utilisateursNotifies;
     }
@@ -189,5 +198,23 @@ public class Utilisateur {
         return getAbonnes().size();
     }
 
-
+    @Override
+    public String toString() {
+        return "Utilisateur{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", pseudo='" + pseudo + '\'' +
+                ", password='" + password + '\'' +
+                ", resetToken='" + resetToken + '\'' +
+                ", Abonnements=" + Abonnements +
+                ", Abonnes=" + Abonnes +
+                ", utilisateursNotifies=" + utilisateursNotifies +
+                ", profil=" + profil +
+                ", publications=" + publications +
+                ", notifications=" + notifications +
+                ", roles=" + roles +
+                ", avis=" + avis +
+                ", paniers=" + paniers +
+                '}';
+    }
 }
