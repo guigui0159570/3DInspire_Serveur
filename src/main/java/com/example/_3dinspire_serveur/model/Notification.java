@@ -23,6 +23,10 @@ public class Notification {
     @JoinColumn
     private Utilisateur utilisateur;
 
+    @NotNull
+    private Long utilisateur_qui_envoie;
+
+
 //    @OneToOne
 //    @JoinColumn(name = "publication_id")
 //    private Publication publication_notif;
@@ -31,10 +35,20 @@ public class Notification {
     public Notification() {
     }
 
-    public Notification(String message, LocalDate date, Utilisateur utilisateur) {
+    public Notification(String message, LocalDate date, Utilisateur utilisateur, Long utilisateur_qui_envoie) {
         this.message = message;
         this.date = date;
         this.utilisateur = utilisateur;
+        this.utilisateur_qui_envoie = utilisateur_qui_envoie;
+    }
+
+
+    public Long getUtilisateur_qui_envoie() {
+        return utilisateur_qui_envoie;
+    }
+
+    public void setUtilisateur_qui_envoie(Long utilisateur_qui_envoie) {
+        this.utilisateur_qui_envoie = utilisateur_qui_envoie;
     }
 
     public Long getId() {

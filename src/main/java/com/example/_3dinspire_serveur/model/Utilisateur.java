@@ -61,6 +61,7 @@ public class Utilisateur {
             joinColumns = @JoinColumn(name = "utilisateur_id"),
             inverseJoinColumns = @JoinColumn(name = "utilisateur_notifie_id")
     )
+    @JsonIgnore
     private Set<Utilisateur> utilisateursNotifies;
 
     @OneToOne
@@ -116,6 +117,9 @@ public class Utilisateur {
         getAbonnes().remove(user);
     }
 
+    public void deleteUserNotifie(Utilisateur user){
+        this.getUtilisateursNotifies().remove(user);
+    }
     public boolean verifAbonnement(Utilisateur user){
         return this.getAbonnements().contains(user);
     }

@@ -6,6 +6,7 @@ import com.example._3dinspire_serveur.model.Utilisateur;
 import com.example._3dinspire_serveur.repository.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -60,7 +61,7 @@ public class UtilisateurControllerREST {
         Optional<Utilisateur> utilisateur = utilisateurRepository.findById(user);
         if (utilisateur_abonne.isPresent() && utilisateur.isPresent()){
             if(!id.equals(user)) {
-                Notification notification = new Notification(null, LocalDate.now(),null);
+                Notification notification = new Notification(utilisateur.get().getPseudo() + " c'est abonné à vous", LocalDate.now(),null, utilisateur.get().getId());
                 utilisateur.get().ajouterAbonnement(utilisateur_abonne.get());
                 utilisateur_abonne.get().ajouterAbonne(utilisateur.get());
                 System.out.println(notification.getId());
@@ -85,6 +86,75 @@ public class UtilisateurControllerREST {
             utilisateurRepository.save(utilisateur_abonne.get());
             utilisateurRepository.save(utilisateur.get());
         }
+    }
+
+    //fonction pour envoyer une notification à tout ce qui veulent etre notifié de utilisateur en paramètre
+    @GetMapping("/allsendnotification/{user}")
+    public String allsendnotification(@PathVariable Long user){
+        System.out.println("zzzzzzzzzzzzzz");
+        Optional<Utilisateur> utilisateur = utilisateurRepository.findById(user);
+        if (utilisateur.isPresent()){
+            for (Utilisateur utilisateurnotifie : utilisateur.get().getUtilisateursNotifies()){
+                System.out.println(utilisateurnotifie.getPseudo());
+                Notification notification = new Notification("Nouvelle publication de "+utilisateur.get().getPseudo(), LocalDate.now(), utilisateurnotifie,utilisateur.get().getId());
+                utilisateurnotifie.ajouterNotification(notification);
+                notificationRepository.save(notification);
+                utilisateurRepository.save(utilisateurnotifie);
+            }
+        }
+        return "ok";
+    }
+
+    // fonction pour se notifie
+    @GetMapping("/senotifie/{user}/{id}")
+    public void senotifie(@PathVariable Long id, @PathVariable Long user){
+        Optional<Utilisateur> utilisateur_abonnement = utilisateurRepository.findById(id);
+        Optional<Utilisateur> utilisateur = utilisateurRepository.findById(user);
+        if (utilisateur_abonnement.isPresent() && utilisateur.isPresent()){
+            if(!id.equals(user)) {
+                utilisateur_abonnement.get().ajouterUserNotifie(utilisateur.get());
+                utilisateurRepository.save(utilisateur_abonnement.get());
+            }
+        }
+    }
+
+    // fonction pour ne plus etre notifie
+    @GetMapping("/sedenotifie/{user}/{id}")
+    public void sedenotifie(@PathVariable Long id, @PathVariable Long user){
+        Optional<Utilisateur> utilisateur_abonne = utilisateurRepository.findById(id);
+        Optional<Utilisateur> utilisateur = utilisateurRepository.findById(user);
+        if (utilisateur_abonne.isPresent() && utilisateur.isPresent()){
+            utilisateur_abonne.get().deleteUserNotifie(utilisateur.get());
+            utilisateurRepository.save(utilisateur_abonne.get());
+        }
+    }
+
+    @GetMapping("/notificationUtilisateur/{user}")
+    public Set<Map<String,String>> notificationUtilisateur(@PathVariable Long user){
+        Set<Map<String,String>> lesnotifsInMap = new HashSet<>();
+        Optional<Utilisateur> utilisateur = utilisateurRepository.findById(user);
+        if (utilisateur.isPresent()){
+            System.out.println("JJJJJJJJJJJ"+ utilisateur.get().getNotifications().size());
+            for (Notification notification: utilisateur.get().getNotifications()) {
+                System.out.println("77777"+ notification.getUtilisateur_qui_envoie());
+
+                Optional<Utilisateur> utilisateurEnvoie = utilisateurRepository.findById(notification.getUtilisateur_qui_envoie());
+
+                if (utilisateurEnvoie.isPresent()) {
+                    Map<String, String> lesnotifs = new HashMap<>();
+                    lesnotifs.put("notifMessage", notification.getMessage());
+                    lesnotifs.put("Date", String.valueOf(notification.getDate()));
+                    if (utilisateur.get().getProfil().getPhoto() != null) {
+                        lesnotifs.put("photo", utilisateurEnvoie.get().getProfil().getPhoto());
+                    } else {
+                        lesnotifs.put("photo", null);
+                    }
+                    lesnotifs.put("pseudo", String.valueOf(utilisateurEnvoie.get().getPseudo()));
+                    lesnotifsInMap.add(lesnotifs);
+                }
+            }
+        }
+        return lesnotifsInMap;
     }
 
     // fonction pour avoir un json de mon utilisateur
@@ -173,13 +243,12 @@ public class UtilisateurControllerREST {
         }
     }
 
-    @GetMapping("/presenceUserNotifie/{userId}/{abonnement}")
+    @GetMapping("/presenceUserNotifie/{userId}/{abonnementid}")
     public boolean presenceUserNotifie(@PathVariable Long userId, @PathVariable Long abonnementid) {
         Optional<Utilisateur> utilisateur = utilisateurRepository.findById(userId);
         Optional<Utilisateur> abonnementUser = utilisateurRepository.findById(abonnementid);
-
         if (utilisateur.isPresent() && abonnementUser.isPresent()) {
-            return utilisateur.get().verifUserNotifies(abonnementUser.get());
+            return abonnementUser.get().verifUserNotifies(utilisateur.get());
         } else {
             return false;
         }
@@ -205,34 +274,6 @@ public class UtilisateurControllerREST {
             System.out.println("Erreur lors de la suppression de l'utilisateur.");
         }
     }
-
-
-
-
-
-    // fonction pour enregistrer une photo dans la bdd
-
-//    @PostMapping("/upload/{user}")
-//    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file, @PathVariable Long user) throws IOException {
-//        Optional<Utilisateur> utilisateur = utilisateurRepository.findById(user);
-//        if (utilisateur.isPresent()){
-//            if (utilisateur.get().getProfil() != null) {
-//                Optional<Profil> profil = profilRepository.findById(utilisateur.get().getProfil().getId());
-//                if (profil.isPresent()){
-//                    System.out.println(profil.get().getId());
-//                    profil.get().setPhoto(file.getBytes());
-//                    utilisateur.get().setProfil(profil.get());
-//                    profilRepository.save(profil.get());
-//                }
-//            }else {
-//                Profil profil = new Profil(null, file.getBytes(),null);
-//                utilisateur.get().setProfil(profil);
-//                profilRepository.save(profil);
-//            }
-//
-//        }
-//        return ResponseEntity.ok("Image téléchargée avec succès !");
-//    }
 
 
     // fonction pour enregistrer les string du compte, pseudo, description
