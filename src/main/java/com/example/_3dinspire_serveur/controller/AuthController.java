@@ -9,7 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+/**
+ * Controller qui sert à la modification de mot de passe
+ */
 @Controller
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -24,6 +26,12 @@ public class AuthController {
         this.userRespository = userRespository;
     }
 
+    /**
+     * Page de modification du mot de passe envoyer par mail
+     * @param token Token passer dans la requête génerer pour le mail
+     * @param model
+     * @return Page de modification
+     */
     @GetMapping("/mail-password")
     public String emailPassword(@RequestParam String token, Model model) {
         if (isValidToken(token)) {
@@ -34,6 +42,11 @@ public class AuthController {
         }
     }
 
+    /**
+     * Vérifie si le token existe pour la réinitialisation de mot de passe
+     * @param token Token de reinitialisation
+     * @return Boolean
+     */
     private boolean isValidToken(String token) {
         if (token != null && !token.isEmpty()) {
             return utilisateurRepository.existsByResetToken(token);
@@ -41,6 +54,13 @@ public class AuthController {
         return false;
     }
 
+    /**
+     * Mapping qui va changer le mot de passe depuis la page EmailPassword
+     * precedement envoyer par mail
+     * @param token Token de réinitialisation
+     * @param password Nouveau mot de passe
+     * @return InvalidToken si pas réussi/Success si réussi
+     */
     @PostMapping("/mail-password")
     public String updatePassword(@RequestParam String token, @RequestParam String password) {
         if (isValidToken(token)) {

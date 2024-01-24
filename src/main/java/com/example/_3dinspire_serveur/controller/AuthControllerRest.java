@@ -29,6 +29,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+/**
+ * Controller qui sert à la connexion, l'inscription
+ */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthControllerRest {
@@ -45,8 +48,17 @@ public class AuthControllerRest {
 
     public void MailService(Environment env){
         this.env = env;
-
     }
+
+    /**
+     * Constructeur auto-générer
+     * @param utilisateurService Model
+     * @param authenticationManager Model
+     * @param jwtUtil Variable de la librairie JWT Token
+     * @param utilisateurRepository Model
+     * @param UserRepository Model
+     * @param profilRepository Model
+     */
     public AuthControllerRest(UtilisateurService utilisateurService, AuthenticationManager authenticationManager, JwtUtil jwtUtil, UtilisateurRepository utilisateurRepository, UserRespository UserRepository, ProfilRepository profilRepository) {
         this.userService = utilisateurService;
         this.authenticationManager = authenticationManager;
@@ -55,6 +67,14 @@ public class AuthControllerRest {
         this.userRespository = UserRepository;
         this.profilRepository = profilRepository;
     }
+
+    /**
+     * Mapping d'inscription (accès ouvert)
+     * @param userDto Informations du nouveau Utilisateur (pseudo, mail, mot de passe)
+     * @param result Vérificateur d'erreur du DTO
+     * @param model Model
+     * @return HTTP Status Ok ou BadRequest avec l'erreur
+     */
     @Transactional
     @PostMapping("/register/save")
     public ResponseEntity<Utilisateur> registration(@Valid @ModelAttribute("user") UtilisateurDTO userDto,
@@ -70,14 +90,6 @@ public class AuthControllerRest {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
-
-        Utilisateur u = userService.saveUser(userDto, false);
-        Profil profil = new Profil(null,null, null);
-        u.setProfil(profil);
-        profilRepository.save(profil);
-        userRespository.save(u);
-        return ResponseEntity.ok(u);
-
         try {
             Utilisateur u = userService.saveUser(userDto);
             Profil profil = new Profil(null, null);
@@ -92,7 +104,14 @@ public class AuthControllerRest {
 
     }
 
-        @GetMapping("/login/verif")
+    /**
+     * Vérifie si le compte est valide
+     * @param userDto Informations du nouveau Utilisateur (pseudo, mail, mot de passe)
+     * @param result Vérificateur d'erreur du DTO
+     * @param model Model
+     * @return HTTP Status Ok si existe ou BadRequest avec l'erreur
+     */
+    @GetMapping("/login/verif")
     public ResponseEntity<Utilisateur> login(@Valid @ModelAttribute("user") UtilisateurDTO userDto,
                                              BindingResult result,
                                              Model model){
@@ -111,6 +130,10 @@ public class AuthControllerRest {
         return ResponseEntity.ok(u);
     }
 
+    /**
+     *
+     * @return
+     */
     @ResponseBody
     @GetMapping("/validate-token")
     public ResponseEntity<ValidationResponse> checkSession() {
@@ -119,7 +142,9 @@ public class AuthControllerRest {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // Classe représentant la réponse JSON
+    /**
+     * Classe représentant la réponse JSON
+     */
     private static class ValidationResponse {
         private final String message;
 
@@ -132,6 +157,11 @@ public class AuthControllerRest {
         }
     }
 
+    /**
+     * Se connecter via email et mot de passe
+     * @param loginReq
+     * @return ResponseEntity : Ok si connecter, BadRequest si non reconnu
+     */
     @ResponseBody
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     public ResponseEntity login(@RequestBody LoginReq loginReq)  {
@@ -154,6 +184,11 @@ public class AuthControllerRest {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
+
+    /**
+     * Renvoie l'email de l'Utilisateur grâce au Token JWT
+     * @return ResponseEntity Ok avec le mail
+     */
     @GetMapping("/get-user-email")
     public ResponseEntity<String> getUserEmail() {
         // Obtenez l'e-mail de l'utilisateur à partir du contexte de sécurité
@@ -161,7 +196,11 @@ public class AuthControllerRest {
         return ResponseEntity.ok(userEmail);
     }
 
-
+    /**
+     * Envoie le mail à l'Utilisateur si il existe
+     * @param email Chaine de caractères de l'email
+     * @return ResponseEntity : Ok si connecter, BadRequest si non reconnu
+     */
     @PostMapping("/resetPassword")
     public ResponseEntity<Void> resetPassword(@RequestParam String email) {
         // Vérifiez si l'e-mail existe dans votre système
@@ -183,11 +222,20 @@ public class AuthControllerRest {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * Génère un Token de reinitialisation
+     * @return UUID randomiser
+     */
     private String generateResetToken() {
         // Générez un jeton unique ici (par exemple, UUID.randomUUID().toString())
         return UUID.randomUUID().toString();
     }
 
+    /**
+     * Envoie le mail
+     * @param to Email destinataire
+     * @param resetToken Token générer aléatoirement
+     */
     private void sendPasswordResetEmail(String to, String resetToken) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -207,8 +255,4 @@ public class AuthControllerRest {
             e.printStackTrace();
         }
     }
-
-
-
-
 }

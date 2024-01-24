@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controlleur qui gère les mails de signalement ou d'aide des utilisateur
+ */
 @RestController
 @RequestMapping("/aide")
 public class AideController {
@@ -31,8 +34,13 @@ public class AideController {
 
     public void MailService(Environment env){
         this.env = env;
-
     }
+
+    /**
+     * Envoie du mail
+     * @param email Email de l'Utilisateur
+     * @param aide Chaine de caractères du type d'aide
+     */
     @PostMapping("/mailAide")
     private void sendPasswordResetEmail(@RequestParam String email, @RequestParam String aide) {
         Utilisateur user = userService.findUserByEmail(email);
@@ -58,6 +66,11 @@ public class AideController {
         }
     }
 
+    /**
+     * Signalement d'une publication
+     * @param email Email de l'Utilisateur
+     * @param id ID de la Publication
+     */
     @PostMapping("/signalPublication")
     private void sendSIgnalPub(@RequestParam String email, @RequestParam Long id) {
         Utilisateur user = userService.findUserByEmail(email);

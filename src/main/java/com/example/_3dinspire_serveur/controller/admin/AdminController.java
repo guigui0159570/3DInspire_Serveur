@@ -28,6 +28,11 @@ public class AdminController {
         this.tagRespository = tagRespository;
     }
 
+    /**
+     * Page d'accueil pour l'administration
+     * @param model Model Spring
+     * @return Page "admin"
+     */
     @GetMapping("/home")
     public String pageHome(Model model){
         model.addAttribute("users", utilisateurRepository.findAll());
@@ -35,6 +40,11 @@ public class AdminController {
         return "admin";
     }
 
+    /**
+     * Suppression d'un Utilisateur
+     * @param id ID de l'Utilisateur
+     * @return ResponseEntity
+     */
     @Transactional
     @DeleteMapping("/utilisateur/delete/{id}")
     public ResponseEntity<String> deleteUtilisateur( @PathVariable("id") Long id) {
@@ -52,6 +62,11 @@ public class AdminController {
         return null;
     }
 
+    /**
+     * Suppression de Publication
+     * @param id ID de la Publication
+     * @return ResponseEntity
+     */
     @Transactional
     @DeleteMapping("/publication/delete/{id}")
     public ResponseEntity<String> deletePublication(@PathVariable("id") Long id) {

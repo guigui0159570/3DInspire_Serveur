@@ -56,14 +56,24 @@ public class UtilisateurControllerREST {
         this.avisRepository = avisRepository;
     }
 
-
+    /**
+     * Ajout d'un utilisateur
+     * @param utilisateur Utilisateur DTO
+     * @param profil Profil de l'Utilisateur
+     * @return Utilisateur
+     */
     @PostMapping("/saveUtilisateur")
     public Utilisateur ajoutUtilisateur(@ModelAttribute@Valid Utilisateur utilisateur, @ModelAttribute@Valid Profil profil){
         profilRepository.save(profil);
         utilisateur.setProfil(profil);
         return utilisateurRepository.save(utilisateur);
     }
- // fonction pour s abonner
+
+    /**
+     * S'abonner à un Utilisateur
+     * @param id ID de l'Utilisateur à qui l'on s'abonne
+     * @param user ID de l'Utilisateur qui s'abonne
+     */
     @GetMapping("/abonnenement/{user}/{id}")
     public void abonnenement(@PathVariable Long id, @PathVariable Long user){
         Optional<Utilisateur> utilisateur_abonne = utilisateurRepository.findById(id);
@@ -84,7 +94,11 @@ public class UtilisateurControllerREST {
         }
     }
 
-    // fonction pour se desabonner
+    /**
+     * Se désabonner d'un Utilisateur
+     * @param id ID de l'Utilisateur à qui l'on se désabonne
+     * @param user ID de l'Utilisateur qui se désabonne
+     */
     @GetMapping("/desabonnemnt/{user}/{id}")
     public void desabonnenement(@PathVariable Long id, @PathVariable Long user){
         Optional<Utilisateur> utilisateur_abonne = utilisateurRepository.findById(id);
@@ -97,10 +111,13 @@ public class UtilisateurControllerREST {
         }
     }
 
-    //fonction pour envoyer une notification à tout ce qui veulent etre notifié de utilisateur en paramètre
+    /**
+     * Fonction pour envoyer une notification à tout ce qui veulent etre notifié de utilisateur en paramètre
+     * @param user ID de l'Utilisateur
+     * @return
+     */
     @GetMapping("/allsendnotification/{user}")
     public String allsendnotification(@PathVariable Long user){
-        System.out.println("zzzzzzzzzzzzzz");
         Optional<Utilisateur> utilisateur = utilisateurRepository.findById(user);
         if (utilisateur.isPresent()){
             for (Utilisateur utilisateurnotifie : utilisateur.get().getUtilisateursNotifies()){
@@ -114,7 +131,11 @@ public class UtilisateurControllerREST {
         return "ok";
     }
 
-    // fonction pour se notifie
+    /**
+     * Fonction pour se notifie
+     * @param id ID de l'Utilisateur pour qui l'on active la cloche
+     * @param user ID de l'Utilisateur qui active la cloche
+     */
     @GetMapping("/senotifie/{user}/{id}")
     public void senotifie(@PathVariable Long id, @PathVariable Long user){
         Optional<Utilisateur> utilisateur_abonnement = utilisateurRepository.findById(id);
@@ -127,7 +148,11 @@ public class UtilisateurControllerREST {
         }
     }
 
-    // fonction pour ne plus etre notifie
+    /**
+     * Fonction pour enlever la notification
+     * @param id ID de l'Utilisateur pour qui l'on désactive la cloche
+     * @param user ID de l'Utilisateur qui désactive la cloche
+     */
     @GetMapping("/sedenotifie/{user}/{id}")
     public void sedenotifie(@PathVariable Long id, @PathVariable Long user){
         Optional<Utilisateur> utilisateur_abonne = utilisateurRepository.findById(id);
@@ -138,6 +163,11 @@ public class UtilisateurControllerREST {
         }
     }
 
+    /**
+     * Retourne les notifications en attentes de l'Utilisateur
+     * @param user ID de l'Utilisateur
+     * @return Iterable Map <nom, donnée>
+     */
     @GetMapping("/notificationUtilisateur/{user}")
     public Set<Map<String,String>> notificationUtilisateur(@PathVariable Long user){
         Set<Map<String,String>> lesnotifsInMap = new HashSet<>();
@@ -166,7 +196,12 @@ public class UtilisateurControllerREST {
         return lesnotifsInMap;
     }
 
-    // fonction pour avoir un json de mon utilisateur
+    /**
+     * Retourne un certain format JSON de l'Utilisateur
+     * @param user ID de l'Utilisateur
+     * @return Infos de l'Utilisateur sous Map<nom, donnée>
+     * @throws UnsupportedEncodingException
+     */
     @GetMapping("/userInformation/{user}")
     public Map<String, String> userInformation(@PathVariable Long user) throws UnsupportedEncodingException {
         Map<String, String> information = new HashMap<>();
@@ -199,7 +234,12 @@ public class UtilisateurControllerREST {
         return information;
     }
 
-    // fonction pour avoir une liste de tout les abonnements d'un utilisateur
+    /**
+     * Fonction pour avoir une liste de tout les abonnements d'un utilisateur
+     * @param userId ID de l'Utilisateur
+     * @return Iterable Utilisateur (abonnements)
+     * @throws UnsupportedEncodingException
+     */
     @GetMapping("/abonnementUser/{userId}")
     public Set<Map> AbonnementUser(@PathVariable Long userId) throws UnsupportedEncodingException {
         Set<Map> abonnementinfo = new HashSet<>();
@@ -217,8 +257,12 @@ public class UtilisateurControllerREST {
         }
     }
 
-    // fonction pour avoir une liste de tout les abonnes d'un utilisateur
-
+    /**
+     * Fonction pour avoir une liste de tout les abonnés d'un utilisateur
+     * @param userId ID de l'Utilisateur
+     * @return Iterable Utilisateur (abonnés)
+     * @throws UnsupportedEncodingException
+     */
     @GetMapping("/abonneUser/{userId}")
     public Set<Map<String,String>> AbonneUser(@PathVariable Long userId) throws UnsupportedEncodingException {
         Set<Map<String,String>> abonneinfo = new HashSet<>();
@@ -238,8 +282,12 @@ public class UtilisateurControllerREST {
         }
     }
 
-
-    // fonction pour voir si un abonné est présent dans mes abonnements
+    /**
+     * Fonction pour voir si un abonné est présent dans mes abonnements
+     * @param userId ID de l'Utilisateur
+     * @param abonneid ID de l'abonné
+     * @return Boolean de presence
+     */
     @GetMapping("/presenceAbonne/{userId}/{abonneid}")
     public boolean presenceAbonne(@PathVariable Long userId, @PathVariable Long abonneid) {
         Optional<Utilisateur> utilisateur = utilisateurRepository.findById(userId);
@@ -270,7 +318,11 @@ public class UtilisateurControllerREST {
         return utilisateur.getId();
     }
 
-
+    /**
+     * Retourne l'Utilisateur correspondant à l'ID
+     * @param id ID de l'Utilisateur
+     * @return Utilisateur
+     */
     @GetMapping("/getUtilisateur/{id}")
     public Utilisateur getUtilisateurById(@PathVariable("id") Long id) {
         if (utilisateurRepository.findById(id).isPresent()) {
@@ -282,23 +334,30 @@ public class UtilisateurControllerREST {
         return new Utilisateur();
     }
 
-        @Transactional
-        @DeleteMapping("/utilisateur/delete/{id}")
-        public void deleteUtilisateur( @PathVariable("id") Long id) {
-            try {
-                avisRepository.deleteAvisByUtilisateurId(id);
-                publicationRepository.deletePublicationByProprietaire(id);
-                profilRepository.deleteProfilByUtilisateurId(id);
-                utilisateurRepository.deleteById(id);
-                System.out.println("Utilisateur supprimé avec succès.");
-            } catch (Exception e) {
-                System.out.println("Erreur lors de la suppression de l'utilisateur.");
-            }
+    /**
+     * Supprime l'Utilisateur correspondant à l'ID
+     * @param id ID de l'Utilisateur
+     */
+    @Transactional
+    @DeleteMapping("/utilisateur/delete/{id}")
+    public void deleteUtilisateur( @PathVariable("id") Long id) {
+        try {
+            avisRepository.deleteAvisByUtilisateurId(id);
+            publicationRepository.deletePublicationByProprietaire(id);
+            profilRepository.deleteProfilByUtilisateurId(id);
+            utilisateurRepository.deleteById(id);
+            System.out.println("Utilisateur supprimé avec succès.");
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la suppression de l'utilisateur.");
+        }
     }
 
-
-    // fonction pour enregistrer les string du compte, pseudo, description
-
+    /**
+     * Fonction pour enregistrer les string du compte, pseudo, description
+     * @param requestBody Map contenant les infos du Profil
+     * @param user ID de l'Utilisateur
+     * @return ResponseEntity
+     */
     @PostMapping("/updateStringProfil/{user}")
     public ResponseEntity<String> handleFileUpload(
             @RequestBody Map<String, String> requestBody, @PathVariable Long user) {

@@ -10,6 +10,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * Simple Controller pour controller le fonctionnement de certaines fonctionnalités
+ */
 @Controller
 public class ControllerTest {
 

@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+/**
+ * Controlleur des Publication en Rest
+ */
 @RestController
 @RequestMapping("/publication")
 public class PublicationControllerREST {
@@ -41,6 +44,11 @@ public class PublicationControllerREST {
         this.tagRespository = tagRespository;
     }
 
+    /**
+     * Renvoie la publication en fonction de l'ID
+     * @param id ID de la Publication
+     * @return Publication
+     */
     @GetMapping("/get/{id}")
     public Publication getPublication(
             @PathVariable("id") Long id
@@ -50,6 +58,11 @@ public class PublicationControllerREST {
         else return null;
     }
 
+    /**
+     * Renvoie les Publication d'un Utilisateur
+     * @param id ID de l'Utilisateur
+     * @return Iterable<Publication>
+     */
     @GetMapping("/get/uti/{id}")
     public Iterable<Publication> getPublicationByUtilisateurId(
             @PathVariable("id") Long id
@@ -59,7 +72,10 @@ public class PublicationControllerREST {
         else return null;
     }
 
-
+    /**
+     * Retourne toutes les Publication
+     * @return Iterable Publication
+     */
     @GetMapping("/getAll")
     public ResponseEntity<Iterable<Publication>> getAllPublication() {
         Iterable<Publication> publications = publicationRepository.findAll();
@@ -70,6 +86,10 @@ public class PublicationControllerREST {
         return responseEntity;
     }
 
+    /**
+     * Retourne toutes les Publication dans un ordre décroissant en fonction du temps
+     * @return Iterable Publication
+     */
     @GetMapping("/getAllByTime")
     public ResponseEntity<Iterable<Publication>> getAllPublicationByTime() {
         Iterable<Publication> publications = publicationRepository.getPublicationByTime();
@@ -79,6 +99,13 @@ public class PublicationControllerREST {
 
         return responseEntity;
     }
+
+    /**
+     * Retourne les Publication en fonction du filtre entrer par l'Utilisateur
+     * Cherche dans le Titre/Pseudo(Créateur)/Tags
+     * @param filtre Chaine de caractère pour le filtre
+     * @return Iterable Publication
+     */
     @GetMapping("/getByFiltre")
     public ResponseEntity<Iterable<Publication>> getByFiltre(@RequestParam("filtre")String filtre){
         System.out.println(filtre);
@@ -90,6 +117,11 @@ public class PublicationControllerREST {
         return responseEntity;
     }
 
+    /**
+     * Retourne les Publication achetées par l'Utilisateur
+     * @param id ID de l'Utilisateur
+     * @return Iterable Publication
+     */
     @GetMapping("/getPubAchete/{id}")
     public ResponseEntity<Set<Publication>> getPubAcheteById(@PathVariable("id") Long id){
         Optional<Utilisateur> utilisateurOp = utilisateurRepository.findById(id);
@@ -103,6 +135,12 @@ public class PublicationControllerREST {
         }
     }
 
+    /**
+     * Retourne les Publication avec un filtre de recherche pour l'Utilisateur (créateur)
+     * @param id ID de l'Utilisateur
+     * @param filtre Chaine de caractère pour la recherche
+     * @return Iterable Publication
+     */
     @GetMapping("/get/uti/{id}/getFiltreByUser")
     public ResponseEntity<Iterable<Publication>> getFiltreByUser(@PathVariable("id") Long id,@RequestParam("filtre")String filtre){
         if (utilisateurRepository.findById(id).isPresent()) {
@@ -116,7 +154,19 @@ public class PublicationControllerREST {
 
     }
 
-
+    /**
+     * Création de la Publication
+     * @param titre Titre de la publication
+     * @param description Description de la publication
+     * @param gratuit Boolean de gratuité
+     * @param publique Boolean de visibilité
+     * @param prix Flottant du prix (si gratuit = faux)
+     * @param image Chaine de caractères du nom de l'image
+     * @param file Chaine de caractères du nom du fichier
+     * @param tags Chaine de caractères des tags de la publication (#..)
+     * @param email Email de l'Utilisateur
+     * @return Publication
+     */
     @PostMapping("/save")
     public Publication savePublication(
             @RequestParam("titre") String titre,
@@ -169,8 +219,15 @@ public class PublicationControllerREST {
         return publicationRepository.save(publication);
     }
 
-
-
+    /**
+     * Retourne le Fichier avec son path
+     * @param object Fichier
+     * @param publication_id ID de la Publication
+     * @param proprietaire_id ID du Proprietaire de la Publication
+     * @param titre Titre de la publication
+     * @param type m -> fichier 3D, i -> image
+     * @return File
+     */
     public String isEmpty(MultipartFile object, long publication_id, long proprietaire_id, String titre, String type){
         if (object.isEmpty()) {
             System.out.println("Fichier est vide");
@@ -192,6 +249,10 @@ public class PublicationControllerREST {
         return "_";
     }
 
+    /**
+     * Supprimer la publication
+     * @param id ID de la publication
+     */
     @DeleteMapping("/delete/{id}")
     public void deletePublication(
             @PathVariable("id") Long id
@@ -200,6 +261,11 @@ public class PublicationControllerREST {
         avisRepository.deleteAvisByPublicationId(id);
     }
 
+    /**
+     * Retourne les Avis de la Publication actuel
+     * @param id ID de la Publication
+     * @return Iterable Avis
+     */
     @GetMapping("/avis/get/pub/{id}")
     public Iterable<AvisDTO> getAllAvisByPublication(
             @PathVariable("id") Long id
@@ -218,6 +284,11 @@ public class PublicationControllerREST {
         return avisDTOList;
     }
 
+    /**
+     * Retourne les Avis de l'Utilisateur actuel
+     * @param id ID de l'Utilisateur
+     * @return Iterable Avis
+     */
     @GetMapping("/avis/get/uti/{id}")
     public Iterable<AvisDTO> getAllAvisByUtilisateur(
             @PathVariable("id") Long id
@@ -249,6 +320,10 @@ public class PublicationControllerREST {
 //        }
 //    }
 
+    /**
+     * Retourne tous les avis
+     * @return Iterable Avis
+     */
     @GetMapping("/avis/get")
     public Iterable<AvisDTO> getAllAvis() {
         Iterable<Avis> avisList = avisRepository.findAll();
@@ -265,6 +340,14 @@ public class PublicationControllerREST {
         return avisDTOList;
     }
 
+    /**
+     * Ajouter un Avis
+     * @param commentaire Commentaire de la Publication
+     * @param etoile Note octroyé
+     * @param publication_id ID de la Publication concerné
+     * @param utilisateur_id ID de l'Utilisateur faisant l'Avis
+     * @return Avis
+     */
     @PostMapping("/avis/save")
     public Avis saveAvis(
             @RequestParam("commentaire") String commentaire,

@@ -20,6 +20,9 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Controlleur pour gérer les images et fichiers 3D enregistrer sur le serveur
+ */
 @RestController
 @RequestMapping("/fichiers")
 public class FichiersController {
@@ -38,6 +41,12 @@ public class FichiersController {
     @Value("${file.upload-dir-image-profil}")
     private String uploadDirImageProfil;
 
+    /**
+     * Renvoie un RessourceEntity avec un fichier 3D
+     * @param nomFichier nom du fichier
+     * @return ResponseEntity<Resource> Ressource étant un fichier
+     * @throws MalformedURLException
+     */
     @GetMapping("/model/{nomFichier:.+}")
     public ResponseEntity<Resource> getModel(@PathVariable String nomFichier) throws MalformedURLException {
         Pattern pattern = Pattern.compile("_(\\d+)_");
@@ -55,11 +64,24 @@ public class FichiersController {
         return getResourceResponseEntity(nomFichier, uploadDirModel);
     }
 
+    /**
+     * Renvoie un RessourceEntity avec une image
+     * @param nomFichier nom de l'image
+     * @return ResponseEntity<Resource> Ressource étant une image
+     * @throws MalformedURLException
+     */
     @GetMapping("/image/{nomFichier:.+}")
     public ResponseEntity<Resource> getImage(@PathVariable String nomFichier) throws MalformedURLException {
         return getResourceResponseEntity(nomFichier, uploadDirImage);
     }
 
+    /**
+     * Va cherhce le fichier en fonction de son nom et de son répertoire
+     * @param nomFichier Nom du fichier
+     * @param uploadDir Répertoire du fichier
+     * @return ResponseEntity avec le fichier
+     * @throws MalformedURLException
+     */
     private ResponseEntity<Resource> getResourceResponseEntity(@PathVariable String nomFichier, String uploadDir) throws MalformedURLException {
         Path filePath = Paths.get(uploadDir).resolve(nomFichier).normalize();
         Resource resource = new UrlResource(filePath.toUri());

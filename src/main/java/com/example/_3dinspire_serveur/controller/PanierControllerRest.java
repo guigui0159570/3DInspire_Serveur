@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Controlleur du panier pour gérer les achats
+ */
 @RestController
 @RequestMapping("/panier")
 public class PanierControllerRest {
@@ -24,6 +27,14 @@ public class PanierControllerRest {
     private UserRespository userRespository;
     private PublicationRepository publicationRepository;
 
+    /**
+     * Contructeur
+     * @param utilisateurRepository Repository de l'Utilisateur
+     * @param panierRepository Respository du Panier
+     * @param publicationRepository Repository des publications
+     * @param avisRepository Repository des avis
+     * @param userRespository Respository des Utilisateurs
+     */
     public PanierControllerRest(UtilisateurService utilisateurRepository, PanierRepository panierRepository, PublicationRepository publicationRepository,AvisRepository avisRepository,UserRespository userRespository) {
         this.utilisateurRepository = utilisateurRepository;
         this.panierRepository = panierRepository;
@@ -32,6 +43,11 @@ public class PanierControllerRest {
         this.userRespository = userRespository;
     }
 
+    /**
+     * Renvoie les publications dans le panier de l'utilisateur
+     * @param email Email de l'utilisateur
+     * @return ResponseEntity des publications ajoutées
+     */
     @GetMapping("/getPublicationPanier")
     public ResponseEntity<Iterable<Publication>> getPanier(@RequestParam("email") String email) {
         Iterable<Publication> publications = panierRepository.getPanier(email);
@@ -41,6 +57,12 @@ public class PanierControllerRest {
 
         return responseEntity;
     }
+
+    /**
+     * Créer le panier de l'Utilisateur
+     * @param email Email de l'utilisateur
+     * @return Panier
+     */
     @PostMapping("/createPanier")
     public Panier createPanierForUser(String email) {
         Utilisateur utilisateur = utilisateurRepository.findUserByEmail(email);
@@ -64,6 +86,11 @@ public class PanierControllerRest {
         }
     }
 
+    /**
+     * Renvoie le prix du Panier
+     * @param email Email de l'Utilisateur
+     * @return Float du prix
+     */
     @GetMapping("/getPrix")
     public Float getPrixByPanier(@RequestParam("email") String email) {
         Utilisateur utilisateur = utilisateurRepository.findUserByEmail(email);
@@ -83,6 +110,12 @@ public class PanierControllerRest {
         }
     }
 
+    /**
+     * Ajout d'une Publication dans le Panier
+     * @param email Email de l'Utilisateur
+     * @param idPub ID de la Publication
+     * @return ResponseEntity Ok si ajout effectué, BadRequest si échoué
+     */
     @PostMapping("/ajoutPublication")
     public ResponseEntity<Void> ajoutPublicationPanier(@RequestParam("email") String email, @RequestParam("idPub") Long idPub) {
         Utilisateur utilisateur = utilisateurRepository.findUserByEmail(email);
@@ -122,6 +155,11 @@ public class PanierControllerRest {
         }
     }
 
+    /**
+     * Renvoie les publications dans le panier de l'utilisateur
+     * @param email Email de l'utilisateur
+     * @return ResponseEntity des publications ajoutées
+     */
     @GetMapping("/getPublication")
     public ResponseEntity<?> getPublications(@RequestParam("email") String email) {
         Utilisateur utilisateur = utilisateurRepository.findUserByEmail(email);
@@ -149,7 +187,11 @@ public class PanierControllerRest {
         }
     }
 
-
+    /**
+     * Suppression du panier si il n'est pas fermé
+     * @param id ID de la Publication du Panier
+     * @param email Email de l'utilisateur
+     */
     @DeleteMapping("/delete/{id}")
     public void deletePublication(
             @PathVariable("id") Long id, @RequestParam("email") String email
@@ -167,6 +209,10 @@ public class PanierControllerRest {
         publicationRepository.save(publication);
     }
 
+    /**
+     * Paiement du Panier pour les droits d'accès à l'objet 3D
+     * @param email Email de l'Utilisateur
+     */
     @PostMapping("/paiement")
     public void paiementPanier(
             @RequestParam("email") String email
@@ -188,8 +234,5 @@ public class PanierControllerRest {
             }
         }
     }
-
-
-
 }
 
