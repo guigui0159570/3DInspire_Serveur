@@ -38,6 +38,7 @@ import java.util.*;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/user")
 public class UtilisateurControllerREST {
 
     @Value("${file.upload-dir-image-profil}")

@@ -1,33 +1,28 @@
 package com.example._3dinspire_serveur;
 
 import com.example._3dinspire_serveur.model.Avis;
-import com.example._3dinspire_serveur.model.DTO.UtilisateurDTO;
-import com.example._3dinspire_serveur.model.Panier;
 import com.example._3dinspire_serveur.model.Publication;
 import com.example._3dinspire_serveur.model.Utilisateur;
 import com.example._3dinspire_serveur.repository.AvisRepository;
 import com.example._3dinspire_serveur.repository.PublicationRepository;
 import com.example._3dinspire_serveur.repository.UtilisateurRepository;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+
 
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@RunWith(SpringRunner.class)
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class JpaTest {
 
-    @Autowired
-    private TestEntityManager entityManager;
+
+@SpringBootTest
+public class JpaTest {
+    
+    private EntityManager entityManager;
 
     @Autowired
     private UtilisateurRepository utilisateurRepository;
