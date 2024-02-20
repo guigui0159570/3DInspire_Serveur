@@ -43,7 +43,7 @@ public class UtilisateurConrollerTest {
         profil.setUtilisateur(utilisateur);
 
         profilRepository.save(profil);
-        utilisateur = new Utilisateur();
+        utilisateur = new Utilisateur("admin.admin@admin.com", "abcd", "abcd");
         utilisateur.setProfil(profil);
 
         utilisateurRepository.save(utilisateur);

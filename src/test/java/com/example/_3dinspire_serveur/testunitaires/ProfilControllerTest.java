@@ -40,7 +40,7 @@ public class ProfilControllerTest {
         profil.setUtilisateur(utilisateur);
 
         profilRepository.save(profil);
-        utilisateur = new Utilisateur();
+        utilisateur = new Utilisateur("admin.admin@admin.com", "abcd", "abcd");
         utilisateur.setProfil(profil);
 
         utilisateurRepository.save(utilisateur);
@@ -60,7 +60,7 @@ public class ProfilControllerTest {
         var request = MockMvcRequestBuilders.get("/profile");
 
         mockMvc.perform(request)
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
     }
 
     @Test
