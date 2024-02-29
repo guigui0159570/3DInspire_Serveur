@@ -1,0 +1,32 @@
+version: "2"
+
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+    environment:
+      - server.address=0.0.0.0
+      - spring.datasource.url=jdbc:postgresql://db:5432/dbinspire
+      - spring.datasource.username=inspire
+      - spring.datasource.password=inspire
+    networks:
+      app_network:
+    ports:
+      - "80:80"
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=dbinspire
+      - POSTGRES_USER=inspire
+      - POSTGRES_PASSWORD=inspire
+    networks:
+      app_network:
+    volumes:
+      - db_app:/var/lib/postgresql/data
+
+networks:
+  app_network:
+
+volumes:
+  db_app:
